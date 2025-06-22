@@ -63,29 +63,64 @@ interface SkillCategory {
 
 export const skills: SkillCategory[] = [
   {
-    category: 'Technical Skills',
+    category: "Languages",
     items: [
-      'Java',
-      'C++',
-      'C',
-      'HTML',
-      'CSS',
-      'JavaScript',
-      'Python',
-      'React'
-    ]
+      "C++",
+      "JavaScript",
+      "Java",
+      "Python",
+      "C",
+      
+    ],
   },
   {
-    category: 'Tools and Frameworks',
+    category: "Frontend",
     items: [
-      'VS Code',
-      'Git',
-      'GitHub',
-      'Bootstrap',
-      'Tailwind CSS',
-      'Figma',
-      'Elementor (for WordPress)'
-    ]
+      "HTML",
+      "CSS",
+      "Bootstrap",
+      "Tailwind CSS",
+      "React",
+      "Redux",
+      
+    ],
+  },
+  {
+    category: "Backend",
+    items: [
+      "Node.js",
+      "Express.js",
+      "Firebase",
+      "JWT",
+      "OAuth",
+      "Socket.io",
+      "WebRTC",
+      "Next.js",
+    ],
+  },
+  {
+    category: "Database",
+    items: [
+      "MongoDB",
+      "Mongoose",
+      "MySQL",
+    ],
+  },
+  {
+    category: "Tools & Platforms",
+    items: [
+      "VS Code",
+      "Git",
+      "GitHub",
+      "Postman",
+      "Hoppscotch",
+      "Figma",
+      "WordPress",
+      "Elementor",
+      "Vercel",
+      "Netlify",
+      "Heroku",
+    ],
   }
 ];
 

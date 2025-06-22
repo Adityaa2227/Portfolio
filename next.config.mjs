@@ -9,8 +9,9 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  output: 'export',
-  distDir: 'out',
+  // Commenting out static export config for development
+  // output: 'export',
+  // distDir: 'out',
   trailingSlash: true,
 }
 

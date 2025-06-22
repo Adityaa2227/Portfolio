@@ -20,12 +20,10 @@ export default function Hero() {
               <span className="text-primary">Aditya Agarwal</span>
             </h1>
             <h2 className="mt-4 text-xl text-gray-600 sm:text-2xl dark:text-gray-300">
-              Full Stack Developer & Designer
+             Full Stack Web Developer & Software Engineer
             </h2>
             <p className="max-w-2xl mx-auto mt-6 text-gray-600 dark:text-gray-300 lg:mx-0">
-              I create beautiful, functional, and user-friendly digital experiences. 
-              With a passion for clean code and elegant design, I help businesses 
-              bring their vision to life.
+            I build robust, scalable web applications and write efficient code to solve real-world problems. From frontend to backend and data structures to algorithms, I bring logic and performance together.
             </p>
             <div className="flex flex-wrap justify-center gap-4 mt-8 lg:justify-start">
               <a

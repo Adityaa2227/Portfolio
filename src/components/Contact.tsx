@@ -3,6 +3,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { HiMail, HiPhone, HiLocationMarker } from 'react-icons/hi'
+import { FaLinkedin, FaGithub, FaInstagram, FaXTwitter } from 'react-icons/fa6'
 
 export default function Contact() {
   const [ref, inView] = useInView({
@@ -49,7 +50,6 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-semibold font-heading text-secondary dark:text-white">Email</h4>
-                   
                   <a href="mailto:Adityaagar324@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-primary">
                     Adityaagar324@gmail.com
                   </a>
@@ -76,6 +76,47 @@ export default function Contact() {
                   <h4 className="font-semibold font-heading text-secondary dark:text-white">Location</h4>
                   <p className="text-gray-600 dark:text-gray-300">Garhwa, Jharkhand, India</p>
                 </div>
+              </div>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="pt-4">
+              <h4 className="mb-2 text-xl font-semibold font-heading text-secondary dark:text-white">
+                Follow Me
+              </h4>
+              <div className="flex items-center gap-4">
+                <a
+                  href="https://www.linkedin.com/in/aditya2227/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-2xl text-gray-600 dark:text-gray-300 hover:text-primary"
+                >
+                  <FaLinkedin />
+                </a>
+                <a
+                  href="https://github.com/Adityaa2227"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-2xl text-gray-600 dark:text-gray-300 hover:text-primary"
+                >
+                  <FaGithub />
+                </a>
+                <a
+                  href="https://www.instagram.com/agarwal.aditya.32/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-2xl text-gray-600 dark:text-gray-300 hover:text-primary"
+                >
+                  <FaInstagram />
+                </a>
+                <a
+                  href="https://twitter.com/Aditya_3204/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-2xl text-gray-600 dark:text-gray-300 hover:text-primary"
+                >
+                  <FaXTwitter />
+                </a>
               </div>
             </div>
           </motion.div>
@@ -137,4 +178,4 @@ export default function Contact() {
       </div>
     </section>
   )
-} 
+}

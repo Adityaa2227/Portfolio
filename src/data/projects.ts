@@ -12,7 +12,7 @@ export const projects: Project[] = [
   {
     title: 'Cryp2Sale',
     description: 'A global e-commerce platform focused on cryptocurrency products, trusted by over 100+ daily international users for secure and seamless transactions, offering an intuitive and user-friendly shopping experience.',
-    image: '/projects/cryp2sale.png',
+    image: '/projects/Cryp2ale.png',
     tags: ['E-commerce',"Wordpress","Elementor","Payment Gateway",'Cryptocurrency'],
     liveUrl: 'https://cryp2sale.com',
     githubUrl: 'https://github.com/Adityaa2227',

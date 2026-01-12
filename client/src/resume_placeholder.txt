@@ -1,0 +1,4 @@
+// Mock resume content (base64 or just empty file to avoid 404 if checked, but actually Hero checks fetch which will fail or strictly checks object).
+// Hero.jsx checks `resume` state. Since we are in "static mode", I should probably hardcode the resume link/button too or just hide it if not there.
+// User didn't give a resume file, just said "Resume".
+// I'll update Hero to point to a placeholder or just "Resume" text link.

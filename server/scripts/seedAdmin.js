@@ -12,15 +12,15 @@ const seedAdmin = async () => {
     await Admin.deleteMany(); // Clear existing admins
 
     const admin = new Admin({
-      username: 'aditya',
-      password: 'Aditya@2227', // Initial password
+      username: 'aa',
+      password: 'aa@a', // Initial password
     });
 
     await admin.save();
 
     console.log('Admin user created successfully');
-    console.log('Username: aditya');
-    console.log('Password: Aditya@2227');
+    console.log('Username: aa');
+    console.log('Password: aa@a');
     
     process.exit();
   } catch (error) {

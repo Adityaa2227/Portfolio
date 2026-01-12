@@ -7,7 +7,7 @@ const fs = require('fs');
 // @route   GET /api/projects
 // @access  Public
 const getProjects = asyncHandler(async (req, res) => {
-  const projects = await Project.find({ isPublished: true }).sort({ createdAt: -1 });
+  const projects = await Project.find({ isPublished: true }).sort({ order: 1, createdAt: -1 });
   res.json(projects);
 });
 
@@ -15,7 +15,7 @@ const getProjects = asyncHandler(async (req, res) => {
 // @route   GET /api/projects/admin
 // @access  Private
 const getAdminProjects = asyncHandler(async (req, res) => {
-  const projects = await Project.find({}).sort({ createdAt: -1 });
+  const projects = await Project.find({}).sort({ order: 1, createdAt: -1 });
   res.json(projects);
 });
 
@@ -97,6 +97,31 @@ const updateProject = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Reorder projects
+// @route   PUT /api/projects/reorder
+// @access  Private
+const reorderProjects = asyncHandler(async (req, res) => {
+  const { items } = req.body; // Array of { _id, order }
+  
+  if (!items || !Array.isArray(items)) {
+    res.status(400);
+    throw new Error('Invalid items array');
+  }
+
+  const bulkOps = items.map(item => ({
+    updateOne: {
+      filter: { _id: item._id },
+      update: { $set: { order: item.order } }
+    }
+  }));
+
+  if (bulkOps.length > 0) {
+    await Project.bulkWrite(bulkOps);
+  }
+
+  res.json({ message: 'Projects reordered' });
+});
+
 // @desc    Delete a project
 // @route   DELETE /api/projects/:id
 // @access  Private
@@ -121,5 +146,6 @@ module.exports = {
   getAdminProjects,
   createProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  reorderProjects
 };

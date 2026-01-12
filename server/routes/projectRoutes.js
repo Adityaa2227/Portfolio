@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getProjects, getAdminProjects, createProject, updateProject, deleteProject } = require('../controllers/projectController');
+const { getProjects, getAdminProjects, createProject, updateProject, deleteProject, reorderProjects } = require('../controllers/projectController');
 const { protect } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 router.route('/')
   .get(getProjects)
   .post(protect, upload.single('image'), createProject);
+
+router.route('/reorder')
+  .put(protect, reorderProjects);
 
 router.route('/admin')
   .get(protect, getAdminProjects);

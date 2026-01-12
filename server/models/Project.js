@@ -10,7 +10,8 @@ const projectSchema = new mongoose.Schema({
   youtubeVideoUrl: { type: String, default: null },
   projectImage: { type: String, default: null }, // URL
   isFeatured: { type: Boolean, default: false },
-  isPublished: { type: Boolean, default: true }
+  isPublished: { type: Boolean, default: true },
+  order: { type: Number, default: 0 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Project', projectSchema);

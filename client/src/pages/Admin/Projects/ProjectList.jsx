@@ -3,9 +3,31 @@ import { Link } from 'react-router-dom';
 import api from '../../../api/axios';
 import { Plus, Edit2, Trash2, Github, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { SortableItem } from '../../../components/Admin/SortableItem';
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     fetchProjects();
@@ -23,6 +45,32 @@ const ProjectList = () => {
     }
   };
 
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setProjects((items) => {
+        const oldIndex = items.findIndex((i) => i._id === active.id);
+        const newIndex = items.findIndex((i) => i._id === over.id);
+        
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        
+        // Prepare data for backend: send ALL items with their new index as order
+        // This ensures the custom order is saved
+        const updates = newItems.map((item, index) => ({
+            _id: item._id,
+            order: index
+        }));
+
+        // Fire and forget (or await if you want to show loading)
+        api.put('/projects/reorder', { items: updates })
+            .catch(err => console.error('Reorder failed', err));
+
+        return newItems;
+      });
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -36,63 +84,73 @@ const ProjectList = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            key={project._id} 
-            className="glass-panel overflow-hidden rounded-xl group relative"
-          >
-            {/* Image Preview */}
-            <div className="h-48 bg-gray-800 relative overflow-hidden">
-                {project.projectImage ? (
-                    <img src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} alt={project.title} className="w-full h-full object-cover" />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600">No Image</div>
-                )}
-                <div className="absolute top-2 right-2 flex gap-2">
-                    <span className={`px-2 py-1 text-xs rounded border ${project.isPublished ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'}`}>
-                        {project.isPublished ? 'Published' : 'Draft'}
-                    </span>
-                </div>
-            </div>
+      <DndContext 
+        sensors={sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext 
+            items={projects.map(p => p._id)} 
+            strategy={rectSortingStrategy}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {projects.map((project) => (
+              <SortableItem key={project._id} id={project._id}>
+                  <div 
+                    className="glass-panel overflow-hidden rounded-xl group relative h-full flex flex-col"
+                  >
+                        {/* Image Preview */}
+                        <div className="h-48 bg-gray-800 relative overflow-hidden shrink-0">
+                            {project.projectImage ? (
+                                <img src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} alt={project.title} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-600">No Image</div>
+                            )}
+                            <div className="absolute top-2 right-2 flex gap-2">
+                                <span className={`px-2 py-1 text-xs rounded border ${project.isPublished ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'}`}>
+                                    {project.isPublished ? 'Published' : 'Draft'}
+                                </span>
+                            </div>
+                        </div>
 
-            <div className="p-4">
-               <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-               <p className="text-gray-400 text-sm line-clamp-2 mb-4">{project.description}</p>
-               
-               <div className="flex gap-2 mb-4 flex-wrap">
-                    {project.technologies.slice(0, 3).map(t => (
-                        <span key={t} className="text-xs bg-white/5 px-2 py-1 rounded text-gray-300">{t}</span>
-                    ))}
-                    {project.technologies.length > 3 && <span className="text-xs text-gray-500">+{project.technologies.length - 3}</span>}
-               </div>
+                        <div className="p-4 flex flex-col flex-1">
+                        <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                        <p className="text-gray-400 text-sm line-clamp-2 mb-4">{project.description}</p>
+                        
+                        <div className="flex gap-2 mb-4 flex-wrap">
+                                {project.technologies.slice(0, 3).map(t => (
+                                    <span key={t} className="text-xs bg-white/5 px-2 py-1 rounded text-gray-300">{t}</span>
+                                ))}
+                                {project.technologies.length > 3 && <span className="text-xs text-gray-500">+{project.technologies.length - 3}</span>}
+                        </div>
 
-               <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                    <div className="flex gap-3">
-                         {project.githubLink && <a href={project.githubLink} target="_blank" className="text-gray-400 hover:text-white"><Github size={18}/></a>}
-                         {project.liveLink && <a href={project.liveLink} target="_blank" className="text-gray-400 hover:text-white"><ExternalLink size={18}/></a>}
-                    </div>
-                    <div className="flex gap-2">
-                        <Link 
-                            to={`/admin/projects/edit/${project._id}`}
-                            className="p-2 hover:bg-white/10 rounded-lg text-blue-400 transition-colors"
-                        >
-                            <Edit2 size={18} />
-                        </Link>
-                        <button 
-                            onClick={() => handleDelete(project._id)}
-                            className="p-2 hover:bg-white/10 rounded-lg text-red-400 transition-colors"
-                        >
-                            <Trash2 size={18} />
-                        </button>
-                    </div>
-               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                <div className="flex gap-3">
+                                    {project.githubLink && <a href={project.githubLink} target="_blank" className="text-gray-400 hover:text-white"><Github size={18}/></a>}
+                                    {project.liveLink && <a href={project.liveLink} target="_blank" className="text-gray-400 hover:text-white"><ExternalLink size={18}/></a>}
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link 
+                                        to={`/admin/projects/edit/${project._id}`}
+                                        className="p-2 hover:bg-white/10 rounded-lg text-blue-400 transition-colors"
+                                    >
+                                        <Edit2 size={18} />
+                                    </Link>
+                                    <button 
+                                        onClick={() => handleDelete(project._id)}
+                                        className="p-2 hover:bg-white/10 rounded-lg text-red-400 transition-colors"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                        </div>
+                        </div>
+                  </div>
+              </SortableItem>
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 };

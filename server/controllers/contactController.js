@@ -24,7 +24,8 @@ const submitContact = asyncHandler(async (req, res) => {
 
       // Send mail
       await transporter.sendMail({
-          from: `"${name}" <${email}>`, // sender address
+          from: process.env.SMTP_USER, // Sender address (must be the authenticated user)
+          replyTo: email, // Reply to the visitor
           to: process.env.ADMIN_EMAIL, // receiver
           subject: `Portfolio Contact: ${name}`,
           text: message,
@@ -32,12 +33,11 @@ const submitContact = asyncHandler(async (req, res) => {
       });
 
       console.log(`Email sent from ${email}`);
+      res.status(201).json({ message: 'Message sent successfully', contact });
   } catch (error) {
       console.error('Email send error:', error);
-      // We don't fail the request if email fails, but we might want to log it
+      res.status(500).json({ message: 'Failed to send email', error: error.message });
   }
-
-  res.status(201).json({ message: 'Message sent successfully', contact });
 });
 
 // @route   GET /api/contact (Admin)

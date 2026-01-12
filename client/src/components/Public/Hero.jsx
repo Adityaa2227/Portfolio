@@ -61,9 +61,12 @@ const Hero = () => {
                                 >
                                     View My Work
                                 </Link>
-                                {resume && (
+                                {resume && (() => {
+                                    // Helper for URL
+                                    const BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
+                                    return (
                                     <a 
-                                        href={`http://localhost:5000${resume.fileUrl}`} 
+                                        href={`${BASE_URL}${resume.fileUrl}`} 
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="px-8 py-3 bg-transparent border border-blue-500 text-blue-400 font-semibold rounded-lg hover:bg-blue-500/10 transition-colors flex items-center gap-2"
@@ -71,7 +74,8 @@ const Hero = () => {
                                         <FileText size={18} />
                                         View Resume
                                     </a>
-                                )}
+                                    );
+                                })()}
                              <Link to="contact" smooth={true} duration={500} className="px-8 py-3 bg-transparent border border-gray-600 text-gray-300 font-semibold rounded-lg hover:bg-white/5 transition-all flex items-center gap-2 cursor-pointer">
                                 <Mail size={20} />
                                 Contact Me

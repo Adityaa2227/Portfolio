@@ -84,7 +84,7 @@ const AllProjects = () => {
                                     <div className="h-48 overflow-hidden">
                                         {/* Assuming image is a full URL or relative path handled by backend/proxy */}
                                         <img 
-                                            src={project.projectImage.startsWith('http') ? project.projectImage : `http://localhost:5000${project.projectImage}`} 
+                                            src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? '' : 'http://localhost:5000'}${project.projectImage}`} 
                                             alt={project.title} 
                                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                                         />

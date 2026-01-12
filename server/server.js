@@ -21,9 +21,11 @@ app.use(morgan('common'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes Placeholder
-app.get('/', (req, res) => {
-  res.send('Portfolio API is running...');
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/', (req, res) => {
+    res.send('Portfolio API is running...');
+  });
+}
 
 // Import Routes (will create these later)
 const authRoutes = require('./routes/authRoutes');
@@ -46,6 +48,15 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/coding-profiles', codingProfileRoutes);
 app.use('/api/bio', require('./routes/bioRoutes'));
+
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'))
+  );
+}
 
 // Error Handling Middleware
 const fs = require('fs');

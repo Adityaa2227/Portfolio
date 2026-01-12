@@ -6,16 +6,19 @@ import { Send, Mail, MapPin, Phone, Github, Linkedin, Twitter, Instagram } from 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus('sending');
+        setErrorMessage('');
         try {
             await api.post('/contact', formData);
             setStatus('success');
             setFormData({ name: '', email: '', message: '' });
         } catch (error) {
             setStatus('error');
+            setErrorMessage(error.response?.data?.message || 'Something went wrong. Please try again.');
         }
     };
 
@@ -118,6 +121,7 @@ const Contact = () => {
                                 {status === 'sending' ? 'Sending...' : 'Send Message'}
                             </button>
                             {status === 'success' && <p className="text-green-500 text-center">Message sent successfully!</p>}
+                            {status === 'error' && <p className="text-red-500 text-center">{errorMessage}</p>}
                         </form>
                     </div>
                 </div>

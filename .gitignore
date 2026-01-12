@@ -6,5 +6,5 @@ logs
 dist
 build
 .vscode
-
+.env
 

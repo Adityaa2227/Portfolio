@@ -50,12 +50,13 @@ app.use('/api/coding-profiles', codingProfileRoutes);
 app.use('/api/bio', require('./routes/bioRoutes'));
 
 // Serve static files in production
+// Serve static files in production
+// Frontend will be deployed separately (Vercel), so we don't serve it here.
+// We only serve the API and the uploads folder.
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/dist')));
-
-  app.get(/.*/, (req, res) =>
-    res.sendFile(path.resolve(__dirname, '../client', 'dist', 'index.html'))
-  );
+  app.get('/', (req, res) => {
+    res.send('Portfolio API is running...');
+  });
 }
 
 // Error Handling Middleware

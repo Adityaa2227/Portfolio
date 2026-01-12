@@ -69,7 +69,7 @@ const ResumeManager = () => {
                              <div className="text-sm text-gray-400">Uploaded: {new Date(activeResume.createdAt).toLocaleDateString()}</div>
                          </div>
                      </div>
-                     <a href={`${import.meta.env.PROD ? '' : 'http://localhost:5000'}${activeResume.fileUrl}`} target="_blank" className="text-blue-400 hover:underline">View PDF</a>
+                     <a href={`${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${activeResume.fileUrl}`} target="_blank" className="text-blue-400 hover:underline">View PDF</a>
                  </div>
              ) : (
                  <p className="text-gray-400">No active resume.</p>
@@ -120,7 +120,7 @@ const ResumeManager = () => {
                                 </button>
                             )}
                             {item.isActive && <span className="text-primary flex items-center gap-1"><Check size={14}/> Active</span>}
-                            <a href={`${import.meta.env.PROD ? '' : 'http://localhost:5000'}${item.fileUrl}`} target="_blank" className="text-gray-400 hover:text-white"><Clock size={16}/></a>
+                            <a href={`${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${item.fileUrl}`} target="_blank" className="text-gray-400 hover:text-white"><Clock size={16}/></a>
                         </div>
                     </div>
                 ))}

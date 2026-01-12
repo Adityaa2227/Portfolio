@@ -47,7 +47,7 @@ const ProjectList = () => {
             {/* Image Preview */}
             <div className="h-48 bg-gray-800 relative overflow-hidden">
                 {project.projectImage ? (
-                    <img src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? '' : 'http://localhost:5000'}${project.projectImage}`} alt={project.title} className="w-full h-full object-cover" />
+                    <img src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} alt={project.title} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-600">No Image</div>
                 )}

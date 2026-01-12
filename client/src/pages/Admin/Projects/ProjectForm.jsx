@@ -55,7 +55,7 @@ const ProjectForm = () => {
             isPublished: project.isPublished,
         });
         if (project.projectImage) {
-            setPreview(project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? '' : 'http://localhost:5000'}${project.projectImage}`);
+            setPreview(project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`);
         }
     }
   };

@@ -62,8 +62,7 @@ const Hero = () => {
                                     View My Work
                                 </Link>
                                 {resume && (() => {
-                                    // Helper for URL
-                                    const BASE_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
+                                    const BASE_URL = import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000';
                                     return (
                                     <a 
                                         href={`${BASE_URL}${resume.fileUrl}`} 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Loader from './components/Common/Loader';
 import { AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
@@ -22,14 +22,44 @@ import ProfileForm from './pages/Admin/CodingProfiles/ProfileForm';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+  const location = useLocation();
+
+  // Trigger loader on route change for specific pages
+  useEffect(() => {
+    // You can customize which paths trigger the loader
+    const cinematicPaths = ['/', '/projects', '/all-projects'];
+    // Check if the new path is one of the cinematic ones
+    // We also want to ensure we don't trigger it if we are ALREADY loading (initial load)
+    // But initial load is handled by useState(true).
+    
+    // Logic: If path changes to a cinematic path, Reset Loader.
+    // Note: This effect runs on mount (initial) and on update.
+    // On mount, isLoading is already true.
+    
+    if (cinematicPaths.includes(location.pathname)) {
+        setIsLoading(true);
+        // We keep showContent true so the old content stays until loader covers it?
+        // Or we hide it?
+        // If we want "Curtain Lift" effect, we effectively want to hiding the content
+        // until the loader says "Ready".
+        // But if showContent is true, the NEW route renders immediately under the loader.
+        // That is actually what we want (Curtain Lift).
+    }
+  }, [location.pathname]);
 
   return (
     <>
-      <AnimatePresence>
-        {isLoading && <Loader onComplete={() => setIsLoading(false)} />}
+      <AnimatePresence mode="wait">
+        {isLoading && (
+            <Loader 
+                onBackendFound={() => setShowContent(true)}
+                onComplete={() => setIsLoading(false)} 
+            />
+        )}
       </AnimatePresence>
       
-      {!isLoading && (
+      {showContent && (
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />

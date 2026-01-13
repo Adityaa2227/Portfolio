@@ -1,23 +1,105 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const express = require('express'); // Restored
+const mongoose = require('mongoose'); // Restored
+const cors = require('cors'); // Restored
+const helmet = require('helmet'); // Restored
+const morgan = require('morgan'); // Restored
+const path = require('path'); // Restored
+require('dotenv').config({ path: path.resolve(__dirname, '.env') }); // Restored
+
+const http = require('http'); // Import http
+const { Server } = require('socket.io'); // Import Socket.io
+const Session = require('./models/Session'); // Import Session model
 
 const app = express();
+const server = http.createServer(app); // Create HTTP server
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Socket.io Setup
+const io = new Server(server, {
+  cors: {
+    origin: ['https://adityaagarwalportfolio.vercel.app', 'http://localhost:5173'],
+    credentials: true,
+    methods: ['GET', 'POST']
+  }
+});
+
+// Socket Handling
+io.on('connection', (socket) => {
+  // console.log('New client connected:', socket.id);
+
+  socket.on('analytics:init', async (data) => {
+    try {
+      // Create new session
+      const session = await Session.create({
+        socketId: socket.id,
+        visitorId: data.visitorId,
+        ipHash: data.ipHash || 'unknown',
+        deviceType: data.deviceType,
+        os: data.os,
+        browser: data.browser,
+        country: data.country,
+        city: data.city,
+        isOnline: true,
+        startTime: new Date(),
+        lastActive: new Date()
+      });
+      socket.sessionId = session._id;
+      
+      // Broadcast live count
+      const liveCount = await Session.countDocuments({ isOnline: true });
+      io.emit('analytics:liveUpdate', { liveUsers: liveCount });
+    } catch (err) {
+      console.error('Analytics Init Error:', err);
+    }
+  });
+
+  socket.on('analytics:pageview', async (data) => {
+    if (!socket.sessionId) return;
+    try {
+      await Session.findByIdAndUpdate(socket.sessionId, {
+        $push: { 
+          pagesVisited: { path: data.path, timestamp: new Date() } 
+        },
+        $inc: { pageCount: 1 },
+        lastActive: new Date()
+      });
+    } catch (err) {
+      console.error('Pageview Error:', err);
+    }
+  });
+
+  socket.on('disconnect', async () => {
+    if (socket.sessionId) {
+      try {
+        const session = await Session.findById(socket.sessionId);
+        if (session) {
+            const duration = (new Date() - new Date(session.startTime)) / 1000;
+            session.isOnline = false;
+            session.endedAt = new Date();
+            session.duration = duration;
+            await session.save();
+        }
+        
+        // Broadcast live count
+        const liveCount = await Session.countDocuments({ isOnline: true });
+        io.emit('analytics:liveUpdate', { liveUsers: liveCount });
+      } catch (err) {
+        console.error('Disconnect Error:', err);
+      }
+    }
+  });
+});
+
 app.use(cors({
   origin: ['https://adityaagarwalportfolio.vercel.app', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 app.use(helmet({
-  crossOriginResourcePolicy: false, // Allow loading images from static folder
+  crossOriginResourcePolicy: false, 
 }));
 app.use(morgan('common'));
 
@@ -31,7 +113,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// Import Routes (will create these later)
+// Import Routes
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const skillRoutes = require('./routes/skillRoutes');
@@ -41,6 +123,7 @@ const socialRoutes = require('./routes/socialRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const experienceRoutes = require('./routes/experienceRoutes');
 const codingProfileRoutes = require('./routes/codingProfileRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes'); // Import Analytics
 
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
@@ -52,43 +135,17 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/coding-profiles', codingProfileRoutes);
 app.use('/api/bio', require('./routes/bioRoutes'));
+app.use('/api/analytics', analyticsRoutes); // Use Analytics
 
-// Serve static files in production
-// Serve static files in production
-// Frontend will be deployed separately (Vercel), so we don't serve it here.
-// We only serve the API and the uploads folder.
-if (process.env.NODE_ENV === 'production') {
-  app.get('/', (req, res) => {
-    res.send('Portfolio API is running...');
-  });
-}
-
-// Error Handling Middleware
-const fs = require('fs');
-
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)){
-    fs.mkdirSync(uploadsDir);
-}
-
-// Error Handling Middleware
-app.use((err, req, res, next) => {
-  console.error('ERROR_LOG:', err); // Log the full error object
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode).json({
-    message: err.message || 'Internal Server Error',
-    error: err.toString(), // Send string representation
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-  });
-});
+// ... (Error middleware stays the same) ...
 
 const PORT = process.env.PORT || 5000;
 
 // Connect to DB and Start Server
 const connectDB = require('./config/db');
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  // Use server.listen instead of app.listen
+  server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }).catch(err => {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Loader from './components/Common/Loader';
 import { AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
@@ -97,6 +98,8 @@ function App() {
           <Route path="*" element={<div className="text-white p-10">404 - Not Found</div>} />
         </Routes>
       )}
+      
+      <Analytics />
     </>
   );
 }

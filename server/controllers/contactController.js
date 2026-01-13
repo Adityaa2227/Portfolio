@@ -15,13 +15,13 @@ const submitContact = asyncHandler(async (req, res) => {
       // Create transporter
       const transporter = nodemailer.createTransport({
           host: process.env.SMTP_HOST,
-          port: 587, // More reliable for cloud hosting than 465
-          secure: false, // Use STARTTLS
+          port: process.env.SMTP_PORT, // Back to 465 (SSL) which was verified working
+          secure: true, // true for 465
           auth: {
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS
           },
-          connectionTimeout: 10000, // 10 seconds timeout
+          connectionTimeout: 10000,
           greetingTimeout: 10000
       });
 

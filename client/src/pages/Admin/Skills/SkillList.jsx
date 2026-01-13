@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../../api/axios';
-import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, GripVertical } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from '../../../components/Admin/SortableItem';
+import { toast } from 'react-hot-toast';
 
 const SkillList = () => {
   const [skills, setSkills] = useState([]);
@@ -11,13 +15,21 @@ const SkillList = () => {
   // Form State
   const [formData, setFormData] = useState({ category: '', name: '', icon: '', order: 0, isPublished: true });
 
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   useEffect(() => {
     fetchSkills();
   }, []);
 
   const fetchSkills = async () => {
     const { data } = await api.get('/skills/admin');
-    setSkills(data);
+    // Ensure sorted by order
+    setSkills(data.sort((a,b) => a.order - b.order));
   };
 
   const handleEdit = (skill) => {
@@ -51,6 +63,28 @@ const SkillList = () => {
     if (window.confirm('Delete skill?')) {
         await api.delete(`/skills/${id}`);
         fetchSkills();
+    }
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+        setSkills((items) => {
+            const oldIndex = items.findIndex((item) => item._id === active.id);
+            const newIndex = items.findIndex((item) => item._id === over.id);
+            const newItems = arrayMove(items, oldIndex, newIndex);
+
+            const updates = newItems.map((item, index) => ({
+                _id: item._id,
+                order: index
+            }));
+
+            api.put('/skills/reorder', { skills: updates })
+               .catch(() => toast.error('Failed to save order'));
+
+            return newItems;
+        });
     }
   };
 
@@ -108,33 +142,44 @@ const SkillList = () => {
         </motion.div>
       )}
 
-      <div className="space-y-8">
-        {Object.keys(groupedSkills).map(category => (
-            <div key={category}>
-                <h2 className="text-xl font-semibold mb-4 text-primary border-b border-white/10 pb-2">{category}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {groupedSkills[category].map(skill => (
-                        <div key={skill._id} className="glass-card p-4 rounded-lg flex justify-between items-center group">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-xl">
-                                    {/* Try to render img if url, else text/icon class */}
-                                    {skill.icon.startsWith('http') ? <img src={skill.icon} className="w-6 h-6" /> : <span className="text-sm">Icon</span>}
-                                </div>
-                                <div>
-                                    <div className="font-bold">{skill.name}</div>
-                                    <div className="text-xs text-gray-500">Order: {skill.order}</div>
-                                </div>
-                            </div>
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => handleEdit(skill)} className="text-blue-400 hover:text-white"><Edit2 size={16}/></button>
-                                <button onClick={() => handleDelete(skill._id)} className="text-red-400 hover:text-white"><Trash2 size={16}/></button>
-                            </div>
+      <DndContext 
+        sensors={sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+      >
+        <div className="space-y-8">
+            {Object.keys(groupedSkills).map(category => (
+                <div key={category}>
+                    <h2 className="text-xl font-semibold mb-4 text-primary border-b border-white/10 pb-2">{category}</h2>
+                    <SortableContext items={groupedSkills[category].map(s => s._id)} strategy={rectSortingStrategy}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {groupedSkills[category].map(skill => (
+                                <SortableItem key={skill._id} id={skill._id}>
+                                    <div className="glass-card p-4 rounded-lg flex justify-between items-center group cursor-grab active:cursor-grabbing">
+                                        <div className="flex items-center gap-3">
+                                            <div className="text-gray-500"><GripVertical size={16}/></div>
+                                            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-xl overflow-hidden">
+                                                {/* Try to render img if url, else text/icon class */}
+                                                {skill.icon.startsWith('http') ? <img src={skill.icon} className="w-6 h-6 object-contain" /> : <span className="text-sm">Icon</span>}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold">{skill.name}</div>
+                                                <div className="text-xs text-gray-500">Order: {skill.order}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => handleEdit(skill)} className="text-blue-400 hover:text-white"><Edit2 size={16}/></button>
+                                            <button onClick={() => handleDelete(skill._id)} className="text-red-400 hover:text-white"><Trash2 size={16}/></button>
+                                        </div>
+                                    </div>
+                                </SortableItem>
+                            ))}
                         </div>
-                    ))}
+                    </SortableContext>
                 </div>
-            </div>
-        ))}
-      </div>
+            ))}
+        </div>
+      </DndContext>
     </div>
   );
 };

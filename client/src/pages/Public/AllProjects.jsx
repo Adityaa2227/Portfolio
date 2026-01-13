@@ -7,14 +7,21 @@ import PublicNavbar from '../../components/Public/Navbar'; // Assuming we can re
 
 const AllProjects = () => {
     const [projects, setProjects] = useState([]);
+    const [filteredProjects, setFilteredProjects] = useState([]);
+    const [categories, setCategories] = useState(['All']);
+    const [activeCategory, setActiveCategory] = useState('All');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const { data } = await api.get('/projects'); // Fetch all projects (or a specific endpoint if we make one for 'all' vs 'featured')
-                // For now, assuming /projects returns all published projects
-                setProjects(data); 
+                const { data } = await api.get('/projects'); 
+                setProjects(data);
+                setFilteredProjects(data);
+
+                // Extract unique categories
+                const uniqueCategories = ['All', ...new Set(data.map(p => p.category || 'Other'))];
+                setCategories(uniqueCategories);
             } catch (error) {
                 console.error('Error fetching projects:', error);
             } finally {
@@ -24,18 +31,17 @@ const AllProjects = () => {
         fetchProjects();
     }, []);
 
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1 }
+    useEffect(() => {
+        console.log('Filtering for:', activeCategory);
+        let result = [];
+        if (activeCategory === 'All') {
+            result = projects;
+        } else {
+            result = projects.filter(p => (p.category || 'Other') === activeCategory);
         }
-    };
-
-    const item = {
-        hidden: { y: 20, opacity: 0 },
-        show: { y: 0, opacity: 1 }
-    };
+        console.log('Found results:', result.length);
+        setFilteredProjects(result);
+    }, [activeCategory, projects]);
 
     return (
         <div className="bg-[#0B1120] min-h-screen text-white">
@@ -63,26 +69,45 @@ const AllProjects = () => {
                     </p>
                 </motion.div>
 
+                {/* Category Filter */}
+                <div className="flex flex-wrap gap-2 mb-10">
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                                activeCategory === cat 
+                                ? 'bg-blue-500 text-white' 
+                                : 'bg-[#1e293b] text-gray-400 hover:text-white hover:bg-[#334155]'
+                            }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+
                 {isLoading ? (
                     <div className="text-center py-20 bg-[#0B1120]">
                          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                     </div>
                 ) : (
-                    <motion.div 
-                        variants={container}
-                        initial="hidden"
-                        animate="show"
+                    <div 
+                        key={activeCategory}
                         className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
                     >
-                        {projects.map((project) => (
+                        {filteredProjects.map((project) => (
                             <motion.div 
                                 key={project._id}
-                                variants={item}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
                                 className="bg-[#1e293b] border border-gray-700/50 rounded-xl overflow-hidden hover:border-blue-500/50 transition-colors group flex flex-col h-full"
                             >
                                 {project.projectImage && (
-                                    <div className="h-48 overflow-hidden">
-                                        {/* Assuming image is a full URL or relative path handled by backend/proxy */}
+                                    <div className="h-48 overflow-hidden relative">
+                                        <div className="absolute top-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-xs text-white font-medium z-10">
+                                            {project.category || 'Project'}
+                                        </div>
                                         <img 
                                             src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} 
                                             alt={project.title} 
@@ -131,7 +156,7 @@ const AllProjects = () => {
                                 </div>
                             </motion.div>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
             </div>
         </div>

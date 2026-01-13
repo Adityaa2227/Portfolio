@@ -6,7 +6,7 @@ import api from '../../api/axios'; // Import your axios instance
 
 gsap.registerPlugin(TextPlugin);
 
-const Loader = ({ onComplete }) => {
+const Loader = ({ onComplete, onBackendFound }) => {
     const [progress, setProgress] = useState(0);
     const [logs, setLogs] = useState([]);
     const containerRef = useRef(null);
@@ -47,13 +47,14 @@ const Loader = ({ onComplete }) => {
                 await api.get('/'); 
                 console.log("[Loader] Backend is ONLINE.");
                 isBackendReady.current = true;
+                if (onBackendFound) onBackendFound(); // Signal that backend is ready
                 clearInterval(pollingInterval.current);
             } catch (error) {
                 console.log("[Loader] Backend sleeping/error...", error.message);
                 // Even on 404/500, it means it's awake enough to respond. 
-                // Network Error means completely down/sleeping.
                 if (error.response) {
                     isBackendReady.current = true;
+                    if (onBackendFound) onBackendFound(); 
                     clearInterval(pollingInterval.current);
                 }
             }
@@ -71,10 +72,19 @@ const Loader = ({ onComplete }) => {
     // ------------------------------------------
     // 2. Animation Timeline
     // ------------------------------------------
-    useEffect(() => {
-        const tl = gsap.timeline();
+    const introDone = useRef(false);
 
-        // PART 1: INTRO (0s - 3s)
+    // ------------------------------------------
+    // 2. Animation Timeline
+    // ------------------------------------------
+    useEffect(() => {
+        const tl = gsap.timeline({
+            onComplete: () => {
+                introDone.current = true;
+            }
+        });
+
+        // PART 1: INTRO (0s - 3.5s)
         tl.to(containerRef.current, { opacity: 1, duration: 1 })
           .fromTo(nameRef.current, 
             { y: 20, opacity: 0 }, 
@@ -87,12 +97,11 @@ const Loader = ({ onComplete }) => {
           }, "-=0.5")
           .fromTo(roleRef.current,
             { opacity: 0 },
-            { opacity: 1, duration: 1, text: "FULL STACK DEVELOPER" },
+            { opacity: 1, duration: 0.8, text: "FULL STACK DEVELOPER" },
             "-=0.5"
           );
 
         // PART 2: LOADING LOOP (Unlimited duration until ready)
-        // We use a separate logic for progress bar to decouple it from timeline
         return () => tl.kill();
     }, []);
 
@@ -105,7 +114,8 @@ const Loader = ({ onComplete }) => {
         let logIndex = 0;
         
         const updateProgress = () => {
-            if (isBackendReady.current) {
+            // Only finish if Backend is Ready AND Intro Animation is Done
+            if (isBackendReady.current && introDone.current) {
                 // Backend ready: Accelerate to 100%
                 currentProgress += (100 - currentProgress) * 0.1;
                 if (currentProgress > 99.5) {
@@ -114,7 +124,7 @@ const Loader = ({ onComplete }) => {
                     return; // Stop loop
                 }
             } else {
-                // Backend sleeping: Stall at ~90%
+                // Backend sleeping OR Intro still playing: Stall at ~90%
                 if (currentProgress < 90) {
                     // Slow down as we get closer to 90
                     const remaining = 90 - currentProgress;

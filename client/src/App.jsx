@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import Loader from './components/Common/Loader';
+import { AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
 import AllProjects from './pages/Public/AllProjects';
 import Login from './pages/Admin/Login';
@@ -19,43 +21,53 @@ import ProfileList from './pages/Admin/CodingProfiles/ProfileList';
 import ProfileForm from './pages/Admin/CodingProfiles/ProfileForm';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Home />} />
-      <Route path="/projects" element={<AllProjects />} />
-
-      {/* Admin Routes */}
-      <Route path="/admin/login" element={<Login />} />
+    <>
+      <AnimatePresence>
+        {isLoading && <Loader onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
       
-      {/* Protected Routes */}
-      <Route element={<AdminRoute />}>
-        <Route element={<AdminLayout />}>
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/projects" element={<ProjectList />} />
-          <Route path="/admin/projects/new" element={<ProjectForm />} />
-          <Route path="/admin/projects/edit/:id" element={<ProjectForm />} />
-          <Route path="/admin/skills" element={<SkillList />} />
-          <Route path="/admin/resume" element={<ResumeManager />} />
-          <Route path="/admin/testimonials" element={<TestimonialList />} />
-          <Route path="/admin/socials" element={<SocialList />} />
-          <Route path="/admin/messages" element={<MessageList />} />
-          
-          <Route path="/admin/bio" element={<BioManager />} />
-          
-          <Route path="/admin/experience" element={<ExperienceList />} />
-          <Route path="/admin/experience/new" element={<ExperienceForm />} />
-          <Route path="/admin/experience/edit/:id" element={<ExperienceForm />} />
+      {!isLoading && (
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<AllProjects />} />
 
-          <Route path="/admin/profiles" element={<ProfileList />} />
-          <Route path="/admin/profiles/new" element={<ProfileForm />} />
-          <Route path="/admin/profiles/edit/:id" element={<ProfileForm />} />
-        </Route>
-      </Route>
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<Login />} />
+          
+          {/* Protected Routes */}
+          <Route element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/dashboard" element={<Dashboard />} />
+              <Route path="/admin/projects" element={<ProjectList />} />
+              <Route path="/admin/projects/new" element={<ProjectForm />} />
+              <Route path="/admin/projects/edit/:id" element={<ProjectForm />} />
+              <Route path="/admin/skills" element={<SkillList />} />
+              <Route path="/admin/resume" element={<ResumeManager />} />
+              <Route path="/admin/testimonials" element={<TestimonialList />} />
+              <Route path="/admin/socials" element={<SocialList />} />
+              <Route path="/admin/messages" element={<MessageList />} />
+              
+              <Route path="/admin/bio" element={<BioManager />} />
+              
+              <Route path="/admin/experience" element={<ExperienceList />} />
+              <Route path="/admin/experience/new" element={<ExperienceForm />} />
+              <Route path="/admin/experience/edit/:id" element={<ExperienceForm />} />
 
-      {/* 404 */}
-      <Route path="*" element={<div className="text-white p-10">404 - Not Found</div>} />
-    </Routes>
+              <Route path="/admin/profiles" element={<ProfileList />} />
+              <Route path="/admin/profiles/new" element={<ProfileForm />} />
+              <Route path="/admin/profiles/edit/:id" element={<ProfileForm />} />
+            </Route>
+          </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<div className="text-white p-10">404 - Not Found</div>} />
+        </Routes>
+      )}
+    </>
   );
 }
 

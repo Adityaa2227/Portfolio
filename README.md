@@ -41,6 +41,10 @@ Built from scratch using the **MERN Stack**, it moves beyond static templates to
 *   **Glassmorphism & Grainy Gradients**: Modern aesthetic choices including backdrop blurs and subtle noise overlays for depth.
 
 ### ⚙️ Backend & Admin (CMS)
+*   **Real-time Analytics Dashboard**:
+    *   **Live User Tracking**: WebSocket-based real-time counter of active visitors.
+    *   **Traffic Insights**: Detailed charts for Daily Visits, Device Types, and Top Pages.
+    *   **Session Recording**: Tracks bounce rates, session duration, and user geography.
 *   **Full CRUD Admin Dashboard**:
     *   **Projects**: Create, Edit, Delete, and Toggle "Featured/Published" status.
     *   **Skills**: Manage technical skills and categorize them dynamically.

@@ -1,0 +1,25 @@
+import { useRef, useEffect, useState } from "react";
+import gsap from "gsap";
+import { useProgress } from "@react-three/drei"; // Optional if using 3D, but user didn't ask for it. We'll stick to DOM.
+
+// Implementation Plan for Cinematic Loader
+/*
+1. Styles:
+   - Fixed position, z-index 9999
+   - bg-slate-950
+   - Text colors: white/gray-400
+
+2. Logic:
+   - Props: { onReady: () => void }
+   - State: progress (0-100), backendReady (bool)
+   - Effect: Ping backend interval. Set backendReady = true on 200 OK.
+   - GSAP Timeline:
+     - 0s: Fade in
+     - 1s: Reveal Name (TextPlugin or simple opacity/y)
+     - 3s: "Initializing..."
+     - Loop: Progress bar increments slowly.
+     - When backendReady=true: Accelerate progress to 100%.
+     - At 100%: "System Ready". 
+     - +1s: Exit animation (Split text? Curtain reveal?).
+     - onComplete: Call onReady().
+*/

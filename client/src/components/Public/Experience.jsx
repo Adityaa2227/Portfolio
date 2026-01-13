@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
 import { Briefcase, Calendar } from 'lucide-react';
 import api from '../../api/axios';
+import useScrollAnimations from '../../hooks/useScrollAnimations';
+import gsap from 'gsap';
 
 const Experience = () => {
     const [experiences, setExperiences] = useState([]);
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const listRef = useRef(null);
+    const { revealSection, revealText, revealStagger } = useScrollAnimations();
 
     useEffect(() => {
         const fetchExperience = async () => {
@@ -18,37 +23,47 @@ const Experience = () => {
         fetchExperience();
     }, []);
 
+    // ANIMATION TRIGGER
+    useEffect(() => {
+        let ctx;
+        if (experiences.length > 0) {
+            ctx = gsap.context(() => {
+                // Reveal Header
+                revealText(headerRef.current);
+                
+                // Reveal List Items 
+                const items = listRef.current.querySelectorAll('.experience-item');
+                revealStagger(items, listRef.current);
+            }, sectionRef);
+        }
+        return () => ctx && ctx.revert();
+    }, [experiences]); // Rerun when data loads
+
     return (
-        <section id="experience" className="py-20 relative text-white">
+        <section id="experience" className="py-20 relative text-white" ref={sectionRef}>
              {/* Background blur similar to other sections */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[100px] -z-10" />
 
             <div className="container mx-auto px-6">
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="mb-16 text-center"
+                <div 
+                    ref={headerRef}
+                    className="mb-16 text-center opacity-0" // Start hidden for GSAP
                 >
                     <h2 className="text-3xl md:text-5xl font-bold mb-4">My <span className="text-blue-500">Experience</span></h2>
                     <p className="text-gray-400 max-w-2xl mx-auto">
                         My professional journey and working history.
                     </p>
-                </motion.div>
+                </div>
 
-                <div className="relative max-w-4xl mx-auto">
+                <div className="relative max-w-4xl mx-auto" ref={listRef}>
                     {/* Vertical Line */}
                     <div className="absolute left-[20px] md:left-1/2 md:-ml-0.5 w-0.5 h-full bg-gray-800" />
 
                     <div className="space-y-12">
                         {experiences.map((exp, index) => (
-                            <motion.div 
+                            <div 
                                 key={exp._id}
-                                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.2 }}
-                                className={`relative flex flex-col md:flex-row gap-8 ${
+                                className={`experience-item relative flex flex-col md:flex-row gap-8 opacity-0 ${ // Start hidden
                                     index % 2 === 0 ? 'md:flex-row-reverse' : ''
                                 }`}
                             >
@@ -80,7 +95,7 @@ const Experience = () => {
                                 
                                 {/* Empty side for timeline balance */}
                                 <div className="hidden md:block md:w-[calc(50%-40px)]" />
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>

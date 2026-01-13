@@ -43,8 +43,8 @@ const Loader = ({ onComplete, onBackendFound }) => {
     useEffect(() => {
         const checkBackend = async () => {
             try {
-                // Ping basic endpoint
-                await api.get('/'); 
+                // Ping valid endpoint to avoid 404
+                await api.get('/projects'); 
                 console.log("[Loader] Backend is ONLINE.");
                 isBackendReady.current = true;
                 if (onBackendFound) onBackendFound(); // Signal that backend is ready

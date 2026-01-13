@@ -34,6 +34,28 @@ const updateSkill = asyncHandler(async (req, res) => {
   }
 });
 
+const reorderSkills = asyncHandler(async (req, res) => {
+  const { skills } = req.body; // Expects array of { _id, order }
+
+  if (!skills || !Array.isArray(skills)) {
+      res.status(400);
+      throw new Error('Invalid input data');
+  }
+
+  const bulkOps = skills.map((skill) => ({
+      updateOne: {
+          filter: { _id: skill._id },
+          update: { $set: { order: skill.order } }
+      }
+  }));
+
+  if (bulkOps.length > 0) {
+      await Skill.bulkWrite(bulkOps);
+  }
+
+  res.json({ message: 'Skills reordered successfully' });
+});
+
 const deleteSkill = asyncHandler(async (req, res) => {
   const skill = await Skill.findById(req.params.id);
   if (skill) {
@@ -50,5 +72,6 @@ module.exports = {
   getAdminSkills,
   createSkill,
   updateSkill,
-  deleteSkill
+  deleteSkill,
+  reorderSkills
 };

@@ -36,3 +36,27 @@ exports.deleteExperience = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.reorderExperience = async (req, res) => {
+    try {
+        const { experiences } = req.body;
+        if (!experiences || !Array.isArray(experiences)) {
+            return res.status(400).json({ message: 'Invalid input data' });
+        }
+
+        const bulkOps = experiences.map((exp) => ({
+            updateOne: {
+                filter: { _id: exp._id },
+                update: { $set: { order: exp.order } }
+            }
+        }));
+
+        if (bulkOps.length > 0) {
+            await Experience.bulkWrite(bulkOps);
+        }
+
+        res.status(200).json({ message: 'Experience reordered successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

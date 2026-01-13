@@ -1,8 +1,6 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import React, { useRef } from 'react'
 import {
   SiOpenjdk,
   SiCplusplus,
@@ -144,15 +142,16 @@ const categoryColors = {
 
 import { skills as staticSkills } from '../../data/personal' // Keep import for icon mapping logic if needed, but we fetch dynamic data
 import api from '../../api/axios'; // Import axios instance
+import gsap from 'gsap';
+import useScrollAnimations from '../../hooks/useScrollAnimations';
 
 // ... (keep icon mappings) ...
 
 export default function Skills() {
   const [skills, setSkills] = React.useState([]);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  })
+  const sectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const { revealText, revealStagger } = useScrollAnimations();
 
   React.useEffect(() => {
     const fetchSkills = async () => {
@@ -190,37 +189,35 @@ export default function Skills() {
     fetchSkills();
   }, []);
 
-  // ... (rest of component uses `skills` state)
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
+  // ANIMATION
+  React.useEffect(() => {
+    let ctx;
+    if (skills.length > 0) {
+        ctx = gsap.context(() => {
+            // Header
+            revealText(headerRef.current);
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
+            // Categories
+            const categories = sectionRef.current.querySelectorAll('.skill-category-wrapper');
+            categories.forEach(cat => {
+                const title = cat.querySelector('h3');
+                const items = cat.querySelectorAll('.skill-card');
+                revealText(title);
+                revealStagger(items, cat);
+            });
+
+        }, sectionRef);
+    }
+    return () => ctx && ctx.revert();
+  }, [skills]);
 
   return (
     // Changed bg to black
-    <section id="skills" className="py-20 bg-black text-white">
+    <section id="skills" className="py-20 bg-black text-white" ref={sectionRef}>
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-          className="mb-16 text-center"
+        <div
+            ref={headerRef}
+            className="mb-16 text-center opacity-0"
         >
           <h2 className="text-3xl font-bold sm:text-4xl font-heading text-white">
             Skills & Expertise
@@ -230,12 +227,12 @@ export default function Skills() {
           <div className="w-20 h-1 mx-auto mt-4 rounded-full bg-white" />
           
   
-        </motion.div>
+        </div>
 
         <div className="space-y-16">
           {skills.map((skillCategory, index) => (
-            <div key={skillCategory.category}>
-              <div className="flex items-center justify-center gap-3 mb-8">
+            <div key={skillCategory.category} className="skill-category-wrapper">
+              <div className="flex items-center justify-center gap-3 mb-8 opacity-0">
                 {categoryIcons[skillCategory.category] && React.createElement(categoryIcons[skillCategory.category], {
                   className: `w-6 h-6 ${categoryColors[skillCategory.category] || 'text-white'}`
                 })}
@@ -243,19 +240,13 @@ export default function Skills() {
                   {skillCategory.category}
                 </h3>
               </div>
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate={inView ? "visible" : "hidden"}
+              <div
                 className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5"
               >
                 {skillCategory.items.map((skill) => (
-                  <motion.div
+                  <div
                     key={skill}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                    // Card styling: Dark gray/zinc background, subtle border
-                    className="relative flex flex-col items-center p-6 transition-all duration-300 bg-zinc-900 border border-zinc-800 shadow-lg group rounded-xl hover:shadow-xl hover:border-zinc-600"
+                    className="skill-card relative flex flex-col items-center p-6 transition-all duration-300 bg-zinc-900 border border-zinc-800 shadow-lg group rounded-xl hover:shadow-xl hover:border-zinc-600 opacity-0"
                   >
                     <div className="absolute inset-0 transition-transform transform bg-white/5 rounded-xl group-hover:scale-95" />
                     {skillIcons[skill] ? React.createElement(skillIcons[skill], {
@@ -265,9 +256,9 @@ export default function Skills() {
                       <HiOutlineLightBulb className="relative z-10 w-12 h-12 mb-4 text-white" />
                     )}
                     <span className="relative z-10 font-medium text-center text-gray-200">{skill}</span>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           ))}
         </div>

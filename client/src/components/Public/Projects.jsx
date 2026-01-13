@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
 import { Github, ExternalLink, Code2, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
+import useScrollAnimations from '../../hooks/useScrollAnimations';
+import gsap from 'gsap';
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
+    const sectionRef = useRef(null);
+    const headerRef = useRef(null);
+    const gridRef = useRef(null);
+    const { revealText, revealStagger } = useScrollAnimations();
 
     useEffect(() => {
         const fetchProjects = async () => {
             try {
                 const { data } = await api.get('/projects');
-                // Filter published projects if needed, backend usually handles this or returns all
                 setProjects(data.filter(p => p.isPublished !== false));
             } catch (error) {
                 console.error('Error fetching projects:', error);
@@ -20,47 +24,40 @@ const Projects = () => {
         fetchProjects();
     }, []);
 
-    // ... variants ...
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.2 }
+    // ANIMATION
+    useEffect(() => {
+        let ctx;
+        if (projects.length > 0) {
+            ctx = gsap.context(() => {
+                revealText(headerRef.current);
+                const items = gridRef.current.querySelectorAll('.project-card');
+                revealStagger(items, gridRef.current);
+            }, sectionRef); // Scope to section
         }
-    };
-
-    const item = {
-        hidden: { y: 20, opacity: 0 },
-        show: { y: 0, opacity: 1 }
-    };
+        return () => ctx && ctx.revert();
+    }, [projects]);
 
     return (
-        <section id="projects" className="py-20 bg-[#0B1120] relative">
+        <section id="projects" className="py-20 bg-[#0B1120] relative" ref={sectionRef}>
             <div className="container mx-auto px-6">
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="mb-16 text-center"
+                <div 
+                    ref={headerRef}
+                    className="mb-16 text-center opacity-0"
                 >
                     <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">Featured <span className="text-blue-500">Projects</span></h2>
                     <p className="text-gray-400 max-w-2xl mx-auto">
                         A showcase of my recent work, side projects, and open source contributions.
                     </p>
-                </motion.div>
+                </div>
 
-                <motion.div 
-                    variants={container}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
+                <div 
+                    ref={gridRef}
                     className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                     {projects.slice(0, 3).map((project) => (
-                        <motion.div 
+                        <div 
                             key={project._id}
-                            variants={item}
-                            className="bg-[#1e293b] border border-gray-700/50 rounded-xl overflow-hidden hover:border-blue-500/50 transition-colors group flex flex-col h-full"
+                            className="project-card bg-[#1e293b] border border-gray-700/50 rounded-xl overflow-hidden hover:border-blue-500/50 transition-colors group flex flex-col h-full opacity-0"
                         >
                             <div className="p-8 flex flex-col h-full">
                                 <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-blue-400 transition-colors">{project.title}</h3>
@@ -102,9 +99,9 @@ const Projects = () => {
                                     </a>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
                     ))}
-                </motion.div>
+                </div>
                 
                 <div className="mt-16 text-center">
                     <Link to="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-white transition-colors">

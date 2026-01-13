@@ -11,6 +11,7 @@ const ProjectForm = () => {
     title: '',
     description: '',
     technologies: '',
+    category: 'Other',
     tags: '',
     githubLink: '',
     liveLink: '',
@@ -47,6 +48,7 @@ const ProjectForm = () => {
             title: project.title,
             description: project.description,
             technologies: project.technologies.join(', '),
+            category: project.category || 'Other',
             tags: project.tags.join(', '),
             githubLink: project.githubLink || '',
             liveLink: project.liveLink || '',
@@ -168,6 +170,12 @@ const ProjectForm = () => {
                     <input type="text" className="w-full bg-black/20 border border-white/10 rounded p-2" placeholder="React, Node.js, MongoDB"
                         value={formData.technologies} onChange={e => setFormData({...formData, technologies: e.target.value})}
                     />
+                </div>
+                <div>
+                     <label className="block text-sm text-gray-400 mb-1">Category</label>
+                     <input type="text" className="w-full bg-black/20 border border-white/10 rounded p-2" placeholder="Full Stack / Game / Tool"
+                         value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+                     />
                 </div>
                 <div>
                     <label className="block text-sm text-gray-400 mb-1">Tags (comma separated)</label>

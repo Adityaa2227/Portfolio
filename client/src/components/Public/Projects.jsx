@@ -6,6 +6,24 @@ import useScrollAnimations from '../../hooks/useScrollAnimations';
 import gsap from 'gsap';
 
 const Projects = () => {
+    const getYoutubeEmbedUrl = (url) => {
+        if (!url) return '';
+        try {
+            if (url.includes('youtube.com/watch')) {
+                const urlObj = new URL(url);
+                const v = urlObj.searchParams.get('v');
+                if (v) return `https://www.youtube.com/embed/${v}`;
+            }
+            if (url.includes('youtu.be/')) {
+                const id = url.split('youtu.be/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${id}`;
+            }
+            return url;
+        } catch {
+            return url;
+        }
+    };
+
     const [projects, setProjects] = useState([]);
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
@@ -99,12 +117,22 @@ const Projects = () => {
                             <div className="w-full lg:w-3/5 group">
                                 <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] shadow-2xl bg-surface aspect-video">
                                     {/* Hover overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-                                    <img
-                                        src={project.projectImage || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop"}
-                                        alt={project.title}
-                                        className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
-                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+                                    {project.youtubeVideoUrl ? (
+                                        <iframe
+                                            src={getYoutubeEmbedUrl(project.youtubeVideoUrl)}
+                                            title={project.title}
+                                            className="w-full h-full border-none relative z-20"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        ></iframe>
+                                    ) : (
+                                        <img
+                                            src={project.projectImage || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop"}
+                                            alt={project.title}
+                                            className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105"
+                                        />
+                                    )}
                                 </div>
                             </div>
 

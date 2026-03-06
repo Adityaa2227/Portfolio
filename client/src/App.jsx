@@ -22,31 +22,14 @@ import ProfileList from './pages/Admin/CodingProfiles/ProfileList';
 import ProfileForm from './pages/Admin/CodingProfiles/ProfileForm';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  const [isLoading, setIsLoading] = useState(() => sessionStorage.getItem('appLoaded') !== 'true');
+  const [showContent, setShowContent] = useState(() => sessionStorage.getItem('appLoaded') === 'true');
   const location = useLocation();
 
   // Trigger loader on route change for specific pages
   useEffect(() => {
-    // You can customize which paths trigger the loader
-    const cinematicPaths = ['/', '/projects', '/all-projects'];
-    // Check if the new path is one of the cinematic ones
-    // We also want to ensure we don't trigger it if we are ALREADY loading (initial load)
-    // But initial load is handled by useState(true).
-    
-    // Logic: If path changes to a cinematic path, Reset Loader.
-    // Note: This effect runs on mount (initial) and on update.
-    // On mount, isLoading is already true.
-    
-    if (cinematicPaths.includes(location.pathname)) {
-        setIsLoading(true);
-        // We keep showContent true so the old content stays until loader covers it?
-        // Or we hide it?
-        // If we want "Curtain Lift" effect, we effectively want to hiding the content
-        // until the loader says "Ready".
-        // But if showContent is true, the NEW route renders immediately under the loader.
-        // That is actually what we want (Curtain Lift).
-    }
+    // We disable the loader for route changes to prevent it from showing again,
+    // as requested so that when anyone refreshes or navigates, they won't get it again.
   }, [location.pathname]);
 
   return (
@@ -55,7 +38,10 @@ function App() {
         {isLoading && (
             <Loader 
                 onBackendFound={() => setShowContent(true)}
-                onComplete={() => setIsLoading(false)} 
+                onComplete={() => {
+                    setIsLoading(false);
+                    sessionStorage.setItem('appLoaded', 'true');
+                }} 
             />
         )}
       </AnimatePresence>

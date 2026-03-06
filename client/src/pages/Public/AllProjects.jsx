@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Globe, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Github, Globe, ArrowLeft, ExternalLink, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import PublicNavbar from '../../components/Public/Navbar'; // Assuming we can reuse or create a simple one
@@ -44,41 +44,45 @@ const AllProjects = () => {
     }, [activeCategory, projects]);
 
     return (
-        <div className="bg-[#0B1120] min-h-screen text-white">
+        <div className="bg-background min-h-screen text-white relative overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
+
             {/* Simple Navbar for this page */}
-            <nav className="fixed top-0 left-0 right-0 py-4 px-6 bg-[#0B1120]/80 backdrop-blur-md z-50 border-b border-gray-800">
+            <nav className="fixed top-0 left-0 right-0 py-4 px-6 bg-black/70 backdrop-blur-xl z-50 border-b border-white/[0.06]">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link to="/" className="text-xl font-bold font-heading">
-                        <span className="text-blue-500">Aditya</span>.dev
+                    <Link to="/" className="text-2xl font-heading font-bold tracking-tight cursor-pointer flex items-center gap-0.5 group">
+                        <span className="text-white group-hover:text-orange-400 transition-colors duration-300">Aditya</span>
+                        <span className="text-orange-500 group-hover:text-white transition-colors duration-300">.dev</span>
                     </Link>
-                    <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-300 font-medium text-sm">
                         <ArrowLeft size={18} /> Back to Home
                     </Link>
                 </div>
             </nav>
 
-            <div className="max-w-7xl mx-auto px-6 pt-32 pb-20">
+            <div className="max-w-7xl mx-auto px-6 pt-32 pb-20 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-12"
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading">All <span className="text-blue-500">Projects</span></h1>
-                    <p className="text-gray-400 max-w-2xl">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading text-white">All <span className="gradient-text-orange">Projects</span></h1>
+                    <p className="text-gray-400 max-w-2xl text-base leading-relaxed">
                         A complete collection of my works, including side projects, experiments, and open-source contributions.
                     </p>
                 </motion.div>
 
                 {/* Category Filter */}
-                <div className="flex flex-wrap gap-2 mb-10">
+                <div className="flex flex-wrap gap-3 mb-12">
                     {categories.map(cat => (
                         <button
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                                 activeCategory === cat 
-                                ? 'bg-blue-500 text-white' 
-                                : 'bg-[#1e293b] text-gray-400 hover:text-white hover:bg-[#334155]'
+                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]' 
+                                : 'bg-white/[0.03] text-gray-400 border border-white/[0.06] hover:text-white hover:border-white/[0.1] hover:bg-white/[0.06]'
                             }`}
                         >
                             {cat}
@@ -87,8 +91,8 @@ const AllProjects = () => {
                 </div>
 
                 {isLoading ? (
-                    <div className="text-center py-20 bg-[#0B1120]">
-                         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <div className="text-center py-20 bg-transparent relative z-10">
+                         <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                     </div>
                 ) : (
                     <div 
@@ -101,44 +105,47 @@ const AllProjects = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3 }}
-                                className="bg-[#1e293b] border border-gray-700/50 rounded-xl overflow-hidden hover:border-blue-500/50 transition-colors group flex flex-col h-full"
+                                className="bg-surface border border-white/[0.06] rounded-2xl overflow-hidden hover:border-orange-500/30 hover:shadow-[0_0_30px_rgba(249,115,22,0.1)] transition-all duration-500 group flex flex-col h-full relative"
                             >
+                                <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+                                
                                 {project.projectImage && (
-                                    <div className="h-48 overflow-hidden relative">
-                                        <div className="absolute top-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-xs text-white font-medium z-10">
+                                    <div className="aspect-video w-full bg-black/40 overflow-hidden relative border-b border-white/[0.06] flex items-center justify-center p-2">
+                                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur border border-white/[0.1] px-3 py-1.5 rounded-full text-xs text-orange-400 font-medium z-20">
                                             {project.category || 'Project'}
                                         </div>
                                         <img 
-                                            src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} 
+                                            src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage.startsWith('/') ? '' : '/'}${project.projectImage}`} 
                                             alt={project.title} 
-                                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                                            className="w-full h-full object-contain object-center transform group-hover:scale-[1.03] transition-transform duration-700"
                                         />
                                     </div>
                                 )}
-                                <div className="p-6 flex flex-col h-full">
-                                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors">{project.title}</h3>
+                                <div className="p-6 md:p-8 flex flex-col h-full relative z-20">
+                                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-orange-400 transition-colors font-heading leading-tight">{project.title}</h3>
                                     <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-grow line-clamp-3">
                                         {project.description}
                                     </p>
                                     
-                                    <div className="flex flex-wrap gap-2 mb-6">
+                                    <div className="flex flex-wrap gap-2 mb-8">
                                         {project.technologies.slice(0, 5).map((tech, i) => (
-                                            <span key={i} className="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full border border-blue-500/20">
+                                            <span key={i} className="px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-xs font-medium text-gray-400 group-hover:border-orange-500/30 group-hover:text-orange-400 transition-colors duration-300">
                                                 {tech}
                                             </span>
                                         ))}
                                     </div>
 
-                                    <div className="flex items-center gap-4 mt-auto">
+                                    <div className="flex items-center gap-6 mt-auto">
                                         {project.liveLink && (
                                             <a 
                                                 href={project.liveLink} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-white hover:text-blue-400 text-sm font-medium transition-colors"
+                                                className="group/link flex items-center gap-2 text-sm font-semibold text-white hover:text-orange-400 transition-colors duration-300"
                                             >
                                                 <Globe size={16} />
-                                                Live Demo
+                                                <span>Live Demo</span>
+                                                <ArrowUpRight size={14} className="opacity-0 -translate-x-1 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-300" />
                                             </a>
                                         )}
                                         {project.githubLink && (
@@ -146,10 +153,10 @@ const AllProjects = () => {
                                                 href={project.githubLink}
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-gray-400 hover:text-white text-sm transition-colors"
+                                                className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-white transition-colors duration-300"
                                             >
                                                 <Github size={16} />
-                                                Source
+                                                <span>Source Code</span>
                                             </a>
                                         )}
                                     </div>

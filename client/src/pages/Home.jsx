@@ -12,7 +12,7 @@ import Contact from '../components/Public/Contact';
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-primary/30">
+    <div className="min-h-screen bg-background text-white selection:bg-orange-500/30">
         <Navbar />
         <Hero />
         <About />

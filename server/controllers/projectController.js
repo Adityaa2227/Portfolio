@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Project = require('../models/Project');
 const path = require('path');
 const fs = require('fs');
+const imagekit = require('../utils/imagekit');
 
 // @desc    Get all projects (Public view - filter by published)
 // @route   GET /api/projects
@@ -27,7 +28,16 @@ const createProject = asyncHandler(async (req, res) => {
   
   let projectImage = null;
   if (req.file) {
-    projectImage = `/uploads/${req.file.filename}`;
+    if (!imagekit) {
+        res.status(500);
+        throw new Error('ImageKit is not configured in environment variables');
+    }
+    const response = await imagekit.upload({
+        file: req.file.buffer,
+        fileName: req.file.originalname,
+        folder: "/portfolio/projects"
+    });
+    projectImage = response.url;
   }
 
   // Parse arrays if they come as strings from FormData
@@ -80,13 +90,17 @@ const updateProject = asyncHandler(async (req, res) => {
     if (isPublished !== undefined) project.isPublished = isPublished === 'true' || isPublished === true;
 
     if (req.file) {
-      // Delete old image if exists
-      if (project.projectImage) {
-        // implementation detail: remove local file. 
-        // const oldPath = path.join(__dirname, '..', project.projectImage);
-        // if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      if (!imagekit) {
+          res.status(500);
+          throw new Error('ImageKit is not configured in environment variables');
       }
-      project.projectImage = `/uploads/${req.file.filename}`;
+      const response = await imagekit.upload({
+          file: req.file.buffer,
+          fileName: req.file.originalname,
+          folder: "/portfolio/projects"
+      });
+      projectImage = response.url;
+      project.projectImage = response.url;
     }
 
     const updatedProject = await project.save();

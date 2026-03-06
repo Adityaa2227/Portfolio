@@ -6,6 +6,24 @@ import api from '../../api/axios';
 import PublicNavbar from '../../components/Public/Navbar'; // Assuming we can reuse or create a simple one
 
 const AllProjects = () => {
+    const getYoutubeEmbedUrl = (url) => {
+        if (!url) return '';
+        try {
+            if (url.includes('youtube.com/watch')) {
+                const urlObj = new URL(url);
+                const v = urlObj.searchParams.get('v');
+                if (v) return `https://www.youtube.com/embed/${v}`;
+            }
+            if (url.includes('youtu.be/')) {
+                const id = url.split('youtu.be/')[1].split('?')[0];
+                return `https://www.youtube.com/embed/${id}`;
+            }
+            return url;
+        } catch {
+            return url;
+        }
+    };
+
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [categories, setCategories] = useState(['All']);
@@ -109,16 +127,26 @@ const AllProjects = () => {
                             >
                                 <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
                                 
-                                {project.projectImage && (
-                                    <div className="aspect-video w-full bg-black/40 overflow-hidden relative border-b border-white/[0.06] flex items-center justify-center p-2">
-                                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur border border-white/[0.1] px-3 py-1.5 rounded-full text-xs text-orange-400 font-medium z-20">
+                                { (project.youtubeVideoUrl || project.projectImage) && (
+                                    <div className="aspect-video overflow-hidden relative border-b border-white/[0.06] group/media">
+                                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur border border-white/[0.1] px-3 py-1.5 rounded-full text-xs text-orange-400 font-medium z-20 pointer-events-none">
                                             {project.category || 'Project'}
                                         </div>
-                                        <img 
-                                            src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage.startsWith('/') ? '' : '/'}${project.projectImage}`} 
-                                            alt={project.title} 
-                                            className="w-full h-full object-contain object-center transform group-hover:scale-[1.03] transition-transform duration-700"
-                                        />
+                                        {project.youtubeVideoUrl ? (
+                                            <iframe
+                                                src={getYoutubeEmbedUrl(project.youtubeVideoUrl)}
+                                                title={project.title}
+                                                className="w-full h-full border-none relative z-10"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            ></iframe>
+                                        ) : (
+                                            <img
+                                                src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} 
+                                                alt={project.title} 
+                                                className="w-full h-full object-contain object-center transform group-hover/media:scale-[1.03] transition-transform duration-700"
+                                            />
+                                        )}
                                     </div>
                                 )}
                                 <div className="p-6 md:p-8 flex flex-col h-full relative z-20">

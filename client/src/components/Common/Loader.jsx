@@ -188,6 +188,7 @@ const Loader = ({ onComplete, onBackendFound }) => {
                 </div>
                 
                 <div className="mono-text mt-2 text-xs text-gray-500" ref={percentageRef}>0%</div>
+                <div className="mono-text mt-4 text-sm text-orange-400 font-medium animate-pulse">Server is starting, please wait...</div>
             </div>
 
             <div className="boot-log mono-text">

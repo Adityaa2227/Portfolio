@@ -22,8 +22,9 @@ import ProfileList from './pages/Admin/CodingProfiles/ProfileList';
 import ProfileForm from './pages/Admin/CodingProfiles/ProfileForm';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(() => sessionStorage.getItem('appLoaded') !== 'true');
-  const [showContent, setShowContent] = useState(() => sessionStorage.getItem('appLoaded') === 'true');
+  const isInitialAdminRoute = window.location.pathname.startsWith('/admin');
+  const [isLoading, setIsLoading] = useState(() => !isInitialAdminRoute && sessionStorage.getItem('appLoaded') !== 'true');
+  const [showContent, setShowContent] = useState(() => isInitialAdminRoute || sessionStorage.getItem('appLoaded') === 'true');
   const location = useLocation();
 
   // Trigger loader on route change for specific pages

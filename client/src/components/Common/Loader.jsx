@@ -181,7 +181,7 @@ const Loader = ({ onComplete, onBackendFound }) => {
             
             <div className="z-20 text-center flex flex-col items-center">
                 <h1 className="cinematic-text text-4xl md:text-6xl mb-2 text-white" ref={nameRef}></h1>
-                <p className="mono-text text-blue-500 text-sm tracking-widest" ref={roleRef}></p>
+                <p className="mono-text text-orange-500 text-sm tracking-widest" ref={roleRef}></p>
 
                 <div className="loader-progress-bar" ref={progressRef}>
                     <div className="loader-progress-fill" ref={progressFillRef}></div>

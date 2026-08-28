@@ -1,0 +1,42 @@
+[
+  {
+    "_id": "696509a9a1833f2562691eff",
+    "platform": "GitHub",
+    "url": "https://github.com/aditya2227",
+    "icon": "github",
+    "isActive": true,
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.687Z",
+    "updatedAt": "2026-01-12T14:48:09.687Z"
+  },
+  {
+    "_id": "696509a9a1833f2562691f00",
+    "platform": "LinkedIn",
+    "url": "https://linkedin.com/in/aditya-agarwal",
+    "icon": "linkedin",
+    "isActive": true,
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.687Z",
+    "updatedAt": "2026-01-12T14:48:09.687Z"
+  },
+  {
+    "_id": "696509a9a1833f2562691f01",
+    "platform": "Twitter",
+    "url": "#",
+    "icon": "twitter",
+    "isActive": true,
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.687Z",
+    "updatedAt": "2026-01-12T14:48:09.687Z"
+  },
+  {
+    "_id": "696509a9a1833f2562691f02",
+    "platform": "Instagram",
+    "url": "#",
+    "icon": "instagram",
+    "isActive": true,
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.687Z",
+    "updatedAt": "2026-01-12T14:48:09.687Z"
+  }
+]

@@ -1,33 +1,19 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import api from '../../api/axios'
+import bioData from '../../data/bio.json'
 import { Code2, Globe, Cpu } from 'lucide-react'
 
 export default function About() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchBio = async () => {
-      try {
-        const { data } = await api.get('/bio');
-        setData(data);
-      } catch (error) {
-        console.error('Error fetching bio:', error);
-      }
-    };
-    fetchBio();
-  }, []);
-
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   })
 
-  const greeting = data?.greeting || 'Who I Am';
-  const intro = data?.introduction || "I'm a Software Engineer and Full Stack Developer...";
-  const description = data?.bioDescription || "I actively participate in coding contests...";
+  const greeting = bioData?.greeting || 'Who I Am';
+  const intro = bioData?.introduction || "I'm a Software Engineer and Full Stack Developer passionate about building impactful solutions.";
+  const description = bioData?.bioDescription || "I actively participate in coding contests and continuously sharpen my skills in Data Structures, Algorithms, and modern web technologies. I love turning complex problems into clean, efficient code.";
 
   const whatIDo = [
     {
@@ -62,7 +48,6 @@ export default function About() {
 
   return (
     <section id="about" className="py-20 bg-background text-white relative overflow-hidden">
-      {/* Subtle background glow */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
 
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">

@@ -1,25 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import api from '../../api/axios';
 import { FileText, Mail, ChevronDown, ArrowRight } from 'lucide-react';
 import { Link } from 'react-scroll';
 
 const Hero = () => {
-  const [resume, setResume] = useState(null);
-
-  useEffect(() => {
-    const fetchResume = async () => {
-        try {
-            const { data } = await api.get('/resume');
-            setResume(data);
-        } catch (error) {
-            console.log('No active resume');
-        }
-    };
-    fetchResume();
-  }, []);
-
-  // Stagger animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -45,11 +29,8 @@ const Hero = () => {
     <section id="home" className="min-h-screen relative flex items-center justify-center overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-background">
-        {/* Primary orange glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-orange-500/[0.07] rounded-full blur-[150px]" />
-        {/* Secondary warm glow */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600/[0.04] rounded-full blur-[120px]" />
-        {/* Bottom accent */}
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-500/[0.03] rounded-full blur-[100px]" />
       </div>
 
@@ -116,20 +97,15 @@ const Hero = () => {
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
 
-                {resume && (() => {
-                  const BASE_URL = import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000';
-                  return (
-                    <a
-                      href={`${BASE_URL}${resume.fileUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-8 py-3.5 bg-transparent border border-orange-500/30 text-orange-400 font-semibold rounded-xl hover:bg-orange-500/10 hover:border-orange-500/50 transition-all duration-300 flex items-center gap-2"
-                    >
-                      <FileText size={18} />
-                      View Resume
-                    </a>
-                  );
-                })()}
+                <a
+                  href="/resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-3.5 bg-transparent border border-orange-500/30 text-orange-400 font-semibold rounded-xl hover:bg-orange-500/10 hover:border-orange-500/50 transition-all duration-300 flex items-center gap-2"
+                >
+                  <FileText size={18} />
+                  View Resume
+                </a>
 
                 <Link
                   to="contact"
@@ -149,9 +125,7 @@ const Hero = () => {
               className="flex-1 flex justify-center md:justify-end relative"
             >
               <div className="relative w-[280px] h-[280px] md:w-[400px] md:h-[400px]">
-                {/* Glow behind avatar */}
                 <div className="absolute inset-0 bg-orange-500/15 rounded-full blur-[80px] animate-pulse-glow" />
-                {/* Avatar ring */}
                 <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-orange-500/20 to-transparent" />
                 <img
                   src="https://ui-avatars.com/api/?name=Aditya+Agarwal&background=random&size=512"

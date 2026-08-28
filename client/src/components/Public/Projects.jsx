@@ -1,59 +1,49 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Github, ExternalLink, Globe, ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import api from '../../api/axios';
+import projectsRaw from '../../data/projects.json';
 import useScrollAnimations from '../../hooks/useScrollAnimations';
 import gsap from 'gsap';
 
-const Projects = () => {
-    const getYoutubeEmbedUrl = (url) => {
-        if (!url) return '';
-        try {
-            if (url.includes('youtube.com/watch')) {
-                const urlObj = new URL(url);
-                const v = urlObj.searchParams.get('v');
-                if (v) return `https://www.youtube.com/embed/${v}`;
-            }
-            if (url.includes('youtu.be/')) {
-                const id = url.split('youtu.be/')[1].split('?')[0];
-                return `https://www.youtube.com/embed/${id}`;
-            }
-            return url;
-        } catch {
-            return url;
+const getYoutubeEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+        if (url.includes('youtube.com/watch')) {
+            const urlObj = new URL(url);
+            const v = urlObj.searchParams.get('v');
+            if (v) return `https://www.youtube.com/embed/${v}`;
         }
-    };
+        if (url.includes('youtu.be/')) {
+            const id = url.split('youtu.be/')[1].split('?')[0];
+            return `https://www.youtube.com/embed/${id}`;
+        }
+        return url;
+    } catch {
+        return url;
+    }
+};
 
-    const [projects, setProjects] = useState([]);
+// Use featured published projects, sorted by order
+const projects = projectsRaw
+    .filter(p => p.isPublished !== false && p.isFeatured === true)
+    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+
+const Projects = () => {
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const gridRef = useRef(null);
     const { revealText, revealStagger } = useScrollAnimations();
 
     useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const { data } = await api.get('/projects');
-                setProjects(data.filter(p => p.isPublished !== false));
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-            }
-        };
-        fetchProjects();
-    }, []);
+        const ctx = gsap.context(() => {
+            revealText(headerRef.current);
 
-    // GSAP animations
-    useEffect(() => {
-        let ctx;
-        if (projects.length > 0) {
-            ctx = gsap.context(() => {
-                revealText(headerRef.current);
+            const sections = gridRef.current.querySelectorAll('.project-section');
+            sections.forEach((section, index) => {
+                const image = section.querySelector('img, iframe')?.closest('.group') ?? section.querySelector('.group');
+                const info = section.querySelector('.project-info');
 
-                const sections = gridRef.current.querySelectorAll('.project-section');
-                sections.forEach((section, index) => {
-                    const image = section.querySelector('img').parentElement;
-                    const info = section.querySelector('.project-info');
-
+                if (image) {
                     gsap.fromTo(image,
                         { opacity: 0, scale: 0.9, x: index % 2 === 0 ? -40 : 40 },
                         {
@@ -66,7 +56,9 @@ const Projects = () => {
                             }
                         }
                     );
+                }
 
+                if (info) {
                     gsap.fromTo(info,
                         { opacity: 0, x: index % 2 === 0 ? 40 : -40 },
                         {
@@ -80,15 +72,14 @@ const Projects = () => {
                             }
                         }
                     );
-                });
-            }, sectionRef);
-        }
-        return () => ctx && ctx.revert();
-    }, [projects]);
+                }
+            });
+        }, sectionRef);
+        return () => ctx.revert();
+    }, []);
 
     return (
         <section id="projects" className="py-20 bg-background relative overflow-hidden" ref={sectionRef}>
-            {/* Background glow */}
             <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
 
             <div className="container mx-auto px-6 relative z-10">
@@ -108,7 +99,7 @@ const Projects = () => {
                 <div ref={gridRef} className="space-y-20">
                     {projects.slice(0, 3).map((project, index) => (
                         <div
-                            key={project._id}
+                            key={project._id || index}
                             className={`project-section relative flex flex-col lg:flex-row gap-10 lg:gap-16 items-center ${
                                 index % 2 === 1 ? 'lg:flex-row-reverse' : ''
                             }`}
@@ -116,7 +107,6 @@ const Projects = () => {
                             {/* Image Side */}
                             <div className="w-full lg:w-3/5 group">
                                 <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] shadow-2xl bg-surface aspect-video">
-                                    {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
                                     {project.youtubeVideoUrl ? (
                                         <iframe

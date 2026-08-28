@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import {
   SiOpenjdk, SiCplusplus, SiC, SiHtml5, SiCss3, SiJavascript, SiPython,
   SiReact, SiGit, SiGithub, SiRedux, SiBootstrap, SiTailwindcss, SiFigma,
@@ -15,8 +15,7 @@ import {
   HiDatabase, HiServer, HiOutlineKey, HiOutlineShieldCheck,
 } from 'react-icons/hi'
 
-import { skills as staticSkills } from '../../data/personal'
-import api from '../../api/axios';
+import skillsRaw from '../../data/skills.json'
 import gsap from 'gsap';
 import useScrollAnimations from '../../hooks/useScrollAnimations';
 
@@ -56,58 +55,42 @@ const categoryIcons = {
   'Tools & Platforms': HiOutlineDesktopComputer,
 };
 
+// Group the flat skills array from JSON into categories
+const order = ['Languages', 'Frontend', 'Backend', 'Database', 'Tools & Platforms'];
+const skills = skillsRaw
+  .reduce((acc, skill) => {
+    const found = acc.find(g => g.category === skill.category);
+    if (found) {
+      found.items.push(skill.name);
+    } else {
+      acc.push({ category: skill.category, items: [skill.name] });
+    }
+    return acc;
+  }, [])
+  .sort((a, b) => {
+    const ia = order.indexOf(a.category);
+    const ib = order.indexOf(b.category);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+
 export default function Skills() {
-  const [skills, setSkills] = React.useState([]);
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
   const { revealText, revealStagger } = useScrollAnimations();
 
-  React.useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const { data } = await api.get('/skills');
-        const grouped = data.reduce((acc, skill) => {
-          const found = acc.find(g => g.category === skill.category);
-          if (found) {
-            found.items.push(skill.name);
-          } else {
-            acc.push({ category: skill.category, items: [skill.name] });
-          }
-          return acc;
-        }, []);
-
-        const order = ['Languages', 'Frontend', 'Backend', 'Database', 'Tools & Platforms'];
-        grouped.sort((a, b) => {
-          const indexA = order.indexOf(a.category);
-          const indexB = order.indexOf(b.category);
-          return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
-        });
-
-        setSkills(grouped);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchSkills();
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      revealText(headerRef.current);
+      const categories = sectionRef.current.querySelectorAll('.skill-category-wrapper');
+      categories.forEach(cat => {
+        const title = cat.querySelector('h3');
+        const items = cat.querySelectorAll('.skill-card');
+        revealText(title);
+        revealStagger(items, cat);
+      });
+    }, sectionRef);
+    return () => ctx.revert();
   }, []);
-
-  // GSAP Animations
-  React.useEffect(() => {
-    let ctx;
-    if (skills.length > 0) {
-      ctx = gsap.context(() => {
-        revealText(headerRef.current);
-        const categories = sectionRef.current.querySelectorAll('.skill-category-wrapper');
-        categories.forEach(cat => {
-          const title = cat.querySelector('h3');
-          const items = cat.querySelectorAll('.skill-card');
-          revealText(title);
-          revealStagger(items, cat);
-        });
-      }, sectionRef);
-    }
-    return () => ctx && ctx.revert();
-  }, [skills]);
 
   return (
     <section id="skills" className="py-20 bg-background text-white relative overflow-hidden" ref={sectionRef}>
@@ -142,7 +125,6 @@ export default function Skills() {
                     key={skill}
                     className="skill-card glass-card relative flex flex-col items-center p-5 md:p-6 rounded-xl group cursor-default opacity-0"
                   >
-                    {/* Hover overlay */}
                     <div className="absolute inset-0 bg-orange-500/[0.03] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     {skillIcons[skill] ? React.createElement(skillIcons[skill], {
                       className: `w-10 h-10 md:w-12 md:h-12 ${skillColors[skill] || 'text-white'} mb-3 relative z-10 transition-transform duration-300 group-hover:scale-110`

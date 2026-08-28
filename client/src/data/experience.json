@@ -1,0 +1,101 @@
+[
+  {
+    "_id": "6965cdf5c7e41a0c69f7d952",
+    "role": "Upcoming Software Engineer Intern (SWE)",
+    "company": "PayPal",
+    "duration": "May 2026 – July 2026 (Upcoming)",
+    "description": "Selected for a Software Engineer Internship at PayPal, scheduled to begin in May. Will be working on production-grade systems alongside experienced engineers, contributing to feature development, code quality, and performance improvements while following industry-standard engineering practices.",
+    "skills": [
+      "Data Structures",
+      "Algorithms",
+      "JavaScript",
+      "React.js",
+      "Software Engineering Fundamentals",
+      "Problem Solving",
+      "Team Collaboration"
+    ],
+    "order": 0,
+    "createdAt": "2026-01-13T04:45:41.268Z",
+    "updatedAt": "2026-01-13T04:45:47.417Z",
+    "__v": 0
+  },
+  {
+    "_id": "6965ce68c7e41a0c69f7d958",
+    "role": "React & Node.js Developer",
+    "company": "NS Apps Innovation",
+    "duration": "January 2026 – Present",
+    "description": "Working as a React and Node.js Developer on production-level web applications. Responsible for building and maintaining scalable frontend interfaces using React, and developing backend APIs using Node.js. Actively involved in integrating frontend with backend services, handling application state, implementing authentication flows, and improving overall performance and user experience. Collaborate with designers and developers to deliver features aligned with business requirements and timelines.",
+    "skills": [
+      "React.js",
+      "JavaScript",
+      "Node.js",
+      "Express.js",
+      "REST APIs",
+      "MongoDB",
+      "State Management",
+      "API Integration",
+      "Git",
+      "GitHub",
+      "Team Collaboration",
+      "Debugging",
+      "Performance Optimization"
+    ],
+    "order": 0,
+    "createdAt": "2026-01-13T04:47:36.528Z",
+    "updatedAt": "2026-01-13T04:47:36.528Z",
+    "__v": 0
+  },
+  {
+    "_id": "69652aaf3cbd4e6a0b03c800",
+    "role": "Software Development Engineer (SDE) Intern",
+    "company": "ETS Network",
+    "duration": "May 2025 – July 2025",
+    "description": "Worked as a Frontend-focused SDE Intern, developing and maintaining user-facing features for web applications. Built reusable React components, implemented responsive UI designs, and integrated frontend logic with existing APIs. Collaborated with the development team to translate design requirements into functional interfaces, fix UI bugs, and improve overall user experience. Followed best practices for clean code, component structure, and version control.",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React.js",
+      "Component-Based Architecture",
+      "Responsive Design",
+      "Git",
+      "GitHub",
+      "API Consumption",
+      "UI Debugging",
+      "Team Collaboration",
+      "Agile Workflow",
+      "Communication"
+    ],
+    "order": 1,
+    "createdAt": "2026-01-12T17:09:03.487Z",
+    "updatedAt": "2026-01-13T04:45:47.417Z",
+    "__v": 0
+  },
+  {
+    "_id": "696529e43cbd4e6a0b03c7f1",
+    "role": "Freelance Web Developer",
+    "company": "Self-Employed / Freelance",
+    "duration": "2023 – Present",
+    "description": "Worked independently with small businesses, startups, and individuals to design and develop responsive, high-performance websites. Delivered end-to-end solutions including UI development, WordPress customization, backend integration, performance optimization, and deployment. Collaborated directly with clients to understand requirements, propose solutions, and deliver projects on time with clear communication and revisions. Also handled website maintenance, bug fixes, and feature enhancements post-delivery.",
+    "skills": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React.js",
+      "WordPress",
+      "PHP",
+      "REST APIs",
+      "MongoDB",
+      "Node.js",
+      "Responsive Design",
+      "SEO Basics",
+      "Website Optimization",
+      "Client Communication",
+      "Deployment"
+    ],
+    "order": 2,
+    "createdAt": "2026-01-12T17:05:40.436Z",
+    "updatedAt": "2026-01-13T04:45:47.417Z",
+    "__v": 0
+  }
+]

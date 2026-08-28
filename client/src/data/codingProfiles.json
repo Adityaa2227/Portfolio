@@ -1,0 +1,41 @@
+[
+  {
+    "_id": "696509a9a1833f2562691efb",
+    "name": "LeetCode",
+    "handle": "aditya2227",
+    "stats": "300+ problems solved",
+    "desc": "Active in contests and consistent daily practice.",
+    "icon": "https://upload.wikimedia.org/wikipedia/commons/1/19/LeetCode_logo_black.png",
+    "link": "https://leetcode.com/aditya2227",
+    "color": "text-yellow-500",
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.624Z",
+    "updatedAt": "2026-01-12T14:48:09.624Z"
+  },
+  {
+    "_id": "696509a9a1833f2562691efc",
+    "name": "Codeforces",
+    "handle": "Newbie (Max: 1134)",
+    "stats": "Regular contest participant",
+    "desc": "steady rating growth.",
+    "icon": "https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/codeforces-512.png",
+    "link": "#",
+    "color": "text-blue-500",
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.624Z",
+    "updatedAt": "2026-01-12T14:48:09.624Z"
+  },
+  {
+    "_id": "696509a9a1833f2562691efd",
+    "name": "CodeChef",
+    "handle": "2⭐ (Max: 1303)",
+    "stats": "Solving problems",
+    "desc": "joining monthly rated contests.",
+    "icon": "https://yt3.googleusercontent.com/hN4RNGp3WbykRUGlxIauQ0Rtl55z6uaz1wjB7mllzWa1hGEvIUoQfPWmCBuAkr75HmiwXXi07a4=s900-c-k-c0x00ffffff-no-rj",
+    "link": "#",
+    "color": "text-orange-500",
+    "__v": 0,
+    "createdAt": "2026-01-12T14:48:09.624Z",
+    "updatedAt": "2026-01-13T04:42:12.611Z"
+  }
+]

@@ -1,25 +1,21 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import api from '../../api/axios';
-import { Send, Mail, MapPin, Phone, Github, Linkedin, Twitter, Instagram, ArrowUpRight } from 'lucide-react';
+import { Send, Mail, MapPin, Phone, Github, Linkedin, Twitter, Instagram } from 'lucide-react';
+
+const ADMIN_EMAIL = 'adiibuilds@gmail.com';
 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setStatus('sending');
-        setErrorMessage('');
-        try {
-            await api.post('/contact', formData);
-            setStatus('success');
-            setFormData({ name: '', email: '', message: '' });
-        } catch (error) {
-            setStatus('error');
-            setErrorMessage(error.response?.data?.message || 'Something went wrong. Please try again.');
-        }
+        // Open native mail client with pre-filled data
+        const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
+        const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
+        window.location.href = `mailto:${ADMIN_EMAIL}?subject=${subject}&body=${body}`;
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
     };
 
     const contactInfo = [
@@ -43,15 +39,14 @@ const Contact = () => {
     ];
 
     const socials = [
-        { icon: Github, href: '#', label: 'GitHub' },
-        { icon: Linkedin, href: '#', label: 'LinkedIn' },
+        { icon: Github, href: 'https://github.com/Adityaa2227', label: 'GitHub' },
+        { icon: Linkedin, href: 'https://linkedin.com/in/aditya-agarwal', label: 'LinkedIn' },
         { icon: Twitter, href: '#', label: 'Twitter' },
         { icon: Instagram, href: '#', label: 'Instagram' },
     ];
 
     return (
         <section id="contact" className="py-20 relative overflow-hidden">
-            {/* Background glow */}
             <div className="absolute top-1/3 left-0 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
 
             <div className="container mx-auto px-6 relative z-10">
@@ -138,7 +133,7 @@ const Contact = () => {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 placeholder:text-gray-600"
+                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 placeholder:text-gray-600 focus:outline-none focus:border-orange-500/40"
                                     placeholder="Your name"
                                     value={formData.name}
                                     onChange={e => setFormData({...formData, name: e.target.value})}
@@ -149,7 +144,7 @@ const Contact = () => {
                                 <input
                                     type="email"
                                     required
-                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 placeholder:text-gray-600"
+                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 placeholder:text-gray-600 focus:outline-none focus:border-orange-500/40"
                                     placeholder="your@email.com"
                                     value={formData.email}
                                     onChange={e => setFormData({...formData, email: e.target.value})}
@@ -160,7 +155,7 @@ const Contact = () => {
                                 <textarea
                                     required
                                     rows="5"
-                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 resize-none placeholder:text-gray-600"
+                                    className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 text-white transition-all duration-300 resize-none placeholder:text-gray-600 focus:outline-none focus:border-orange-500/40"
                                     placeholder="Tell me about your project..."
                                     value={formData.message}
                                     onChange={e => setFormData({...formData, message: e.target.value})}
@@ -169,20 +164,10 @@ const Contact = () => {
 
                             <button
                                 type="submit"
-                                disabled={status === 'sending'}
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-glow-md disabled:opacity-50"
+                                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-glow-md"
                             >
-                                {status === 'sending' ? (
-                                    <span className="flex items-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Sending...
-                                    </span>
-                                ) : (
-                                    <>
-                                        Send Message
-                                        <Send size={18} />
-                                    </>
-                                )}
+                                Send Message
+                                <Send size={18} />
                             </button>
 
                             {status === 'success' && (
@@ -191,16 +176,7 @@ const Contact = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     className="text-green-400 text-center text-sm"
                                 >
-                                    ✓ Message sent successfully!
-                                </motion.p>
-                            )}
-                            {status === 'error' && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-red-400 text-center text-sm"
-                                >
-                                    {errorMessage}
+                                    ✓ Your email client has been opened with the message pre-filled!
                                 </motion.p>
                             )}
                         </form>

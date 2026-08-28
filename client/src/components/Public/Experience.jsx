@@ -1,43 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Briefcase, Calendar, MapPin } from 'lucide-react';
-import api from '../../api/axios';
+import React, { useEffect, useRef } from 'react';
+import { Briefcase, Calendar } from 'lucide-react';
+import experienceData from '../../data/experience.json';
 import useScrollAnimations from '../../hooks/useScrollAnimations';
 import gsap from 'gsap';
 
 const Experience = () => {
-    const [experiences, setExperiences] = useState([]);
     const sectionRef = useRef(null);
     const headerRef = useRef(null);
     const listRef = useRef(null);
     const { revealText, revealStagger } = useScrollAnimations();
 
     useEffect(() => {
-        const fetchExperience = async () => {
-            try {
-                const { data } = await api.get('/experience');
-                setExperiences(data);
-            } catch (error) {
-                console.error('Error fetching experience:', error);
-            }
-        };
-        fetchExperience();
+        const ctx = gsap.context(() => {
+            revealText(headerRef.current);
+            const items = listRef.current.querySelectorAll('.experience-item');
+            revealStagger(items, listRef.current);
+        }, sectionRef);
+        return () => ctx.revert();
     }, []);
-
-    useEffect(() => {
-        let ctx;
-        if (experiences.length > 0) {
-            ctx = gsap.context(() => {
-                revealText(headerRef.current);
-                const items = listRef.current.querySelectorAll('.experience-item');
-                revealStagger(items, listRef.current);
-            }, sectionRef);
-        }
-        return () => ctx && ctx.revert();
-    }, [experiences]);
 
     return (
         <section id="experience" className="py-20 relative text-white overflow-hidden" ref={sectionRef}>
-            {/* Background glow */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/[0.03] rounded-full blur-[130px] -z-10" />
             <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-500/[0.02] rounded-full blur-[100px] -z-10" />
 
@@ -60,9 +43,9 @@ const Experience = () => {
                     <div className="absolute left-[20px] md:left-1/2 md:-ml-[1px] w-[2px] h-full bg-gradient-to-b from-orange-500/30 via-orange-500/10 to-transparent" />
 
                     <div className="space-y-12">
-                        {experiences.map((exp, index) => (
+                        {experienceData.map((exp, index) => (
                             <div
-                                key={exp._id}
+                                key={exp._id || index}
                                 className={`experience-item relative flex flex-col md:flex-row gap-8 opacity-0 ${
                                     index % 2 === 0 ? 'md:flex-row-reverse' : ''
                                 }`}

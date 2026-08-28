@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "69651293577d45df9fd0df94",
+    "name": "Lukas Gomez",
+    "role": "Owner, Cryp2Sale",
+    "message": "Aditya built our entire e-commerce website end-to-end from product management to checkout and admin panel. The site is fast, easy to manage, and works smoothly on mobile. Exactly what we needed.",
+    "rating": 5,
+    "isApproved": true,
+    "isFeatured": false,
+    "createdAt": "2026-01-12T15:26:11.809Z",
+    "updatedAt": "2026-01-12T15:33:51.744Z",
+    "__v": 0
+  },
+  {
+    "_id": "6965133e577d45df9fd0df96",
+    "name": "Michael Weber",
+    "role": "Owner, MW-Gutachen",
+    "message": "We needed a simple, professional landing page for our car business, and the final result matched our expectations perfectly. The layout clearly presents our services, the contact flow is straightforward, and the page performs well across all devices.",
+    "rating": 5,
+    "isApproved": true,
+    "isFeatured": false,
+    "createdAt": "2026-01-12T15:29:02.017Z",
+    "updatedAt": "2026-01-12T15:33:56.288Z",
+    "__v": 0
+  },
+  {
+    "_id": "69651450577d45df9fd0df9c",
+    "name": "Annie V.Dierckx",
+    "role": "Owner, Holzkollektiv-odw.de",
+    "message": "The website design captures the handcrafted feel of our wooden art products beautifully. The layout is simple, visually rich, and makes the collection easy to explore. It works smoothly on mobile and highlights the craftsmanship well.",
+    "rating": 5,
+    "isApproved": true,
+    "isFeatured": false,
+    "createdAt": "2026-01-12T15:33:36.485Z",
+    "updatedAt": "2026-01-12T15:33:57.227Z",
+    "__v": 0
+  },
+  {
+    "_id": "696554dfae271b3f7260cede",
+    "name": "Satyarth Singh",
+    "role": "3Diest",
+    "message": "Your service transformed our workflow—simple, fast, and incredibly effective. I'd recommend it to anyone looking to save time and boost productivity.",
+    "rating": 5,
+    "isApproved": true,
+    "isFeatured": false,
+    "createdAt": "2026-01-12T20:09:03.029Z",
+    "updatedAt": "2026-01-12T20:09:28.096Z",
+    "__v": 0
+  },
+  {
+    "_id": "6965d915db0f025634449d4c",
+    "name": "Piyush Verma",
+    "role": "SDE 1, Amazon",
+    "message": "Driven but grounded. He’s someone who takes his work seriously, thinks long-term, and constantly pushes himself to improve. Not loud or flashy more focused on results than attention. Can overthink at times, but that usually comes from wanting to get things right. Reliable, detail-oriented, and clearly invested in building something real rather than chasing shortcuts.",
+    "rating": 5,
+    "isApproved": true,
+    "isFeatured": false,
+    "createdAt": "2026-01-13T05:33:10.062Z",
+    "updatedAt": "2026-01-24T06:10:51.422Z",
+    "__v": 0
+  }
+]

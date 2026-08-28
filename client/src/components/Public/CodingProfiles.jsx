@@ -1,23 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, ArrowUpRight } from 'lucide-react';
-import api from '../../api/axios';
+import { ArrowUpRight } from 'lucide-react';
+import codingProfilesData from '../../data/codingProfiles.json';
 
 const CodingProfiles = () => {
-  const [profiles, setProfiles] = useState([]);
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const { data } = await api.get('/coding-profiles');
-        setProfiles(data);
-      } catch (error) {
-        console.error('Error fetching profiles:', error);
-      }
-    };
-    fetchProfiles();
-  }, []);
-
   return (
     <section className="py-20 relative text-white overflow-hidden">
       {/* Background glow */}
@@ -40,9 +26,9 @@ const CodingProfiles = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {profiles.map((profile, idx) => (
+          {codingProfilesData.map((profile, idx) => (
             <motion.a
-              key={profile._id}
+              key={profile._id || idx}
               href={profile.link}
               target="_blank"
               rel="noopener noreferrer"

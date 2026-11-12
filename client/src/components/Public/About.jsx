@@ -1,119 +1,104 @@
-'use client'
-import React from 'react'
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
-import bioData from '../../data/bio.json'
-import { Code2, Globe, Cpu } from 'lucide-react'
+import React, { useState } from 'react';
+import { Landmark, BarChart3, MapPin, Puzzle, Zap, Users } from 'lucide-react';
+import Section, { SectionHeading } from './Section';
 
-export default function About() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  })
+const TRAITS = [
+  { Icon: Puzzle, label: 'Problem Solver' },
+  { Icon: Zap, label: 'Fast Learner' },
+  { Icon: Users, label: 'Team Player' },
+];
 
-  const greeting = bioData?.greeting || 'Who I Am';
-  const intro = bioData?.introduction || "I'm a Software Engineer and Full Stack Developer passionate about building impactful solutions.";
-  const description = bioData?.bioDescription || "I actively participate in coding contests and continuously sharpen my skills in Data Structures, Algorithms, and modern web technologies. I love turning complex problems into clean, efficient code.";
+const FACTS = [
+  { Icon: Landmark, title: 'BIT Mesra', lines: ['B.Tech CSE', '(2023–2027)'] },
+  { Icon: BarChart3, title: 'CGPA', lines: [<span key="c" data-count="8.6" data-decimals="1">8.6</span>] },
+  { Icon: MapPin, title: 'Garhwa', lines: ['Jharkhand, India'] },
+];
 
-  const whatIDo = [
-    {
-      icon: <Code2 className="w-6 h-6" />,
-      title: 'Software Development',
-      desc: 'Writing clean, optimized, and scalable code in C++, Java, and JavaScript',
-    },
-    {
-      icon: <Globe className="w-6 h-6" />,
-      title: 'Full Stack Web Development',
-      desc: 'Building full-stack applications using React, Node.js, and MongoDB',
-    },
-    {
-      icon: <Cpu className="w-6 h-6" />,
-      title: 'DSA & Competitive Programming',
-      desc: 'Solved 300+ DSA problems & participated in regular contests on LeetCode, Codeforces, Codechef etc.',
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-  };
-
+/** Uses /about.png when present, otherwise a coded workstation scene. */
+const AboutArt = () => {
+  const [hasImage, setHasImage] = useState(true);
   return (
-    <section id="about" className="py-20 bg-background text-white relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
-
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 text-center"
-        >
-          <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl font-heading text-white">
-            About Me
-          </h2>
-          <div className="section-divider" />
-        </motion.div>
-
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-          {/* Left - Bio */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <h3 className="text-2xl font-semibold font-heading text-white">
-              {greeting}
-            </h3>
-            <p className="text-orange-400/80 font-medium text-lg">
-              {intro}
-            </p>
-            <div
-              className="text-gray-400 leading-relaxed text-base"
-              dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br />') }}
-            />
-          </motion.div>
-
-          {/* Right - What I Do cards */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            className="space-y-4"
-          >
-            <h3 className="text-2xl font-semibold font-heading text-white mb-6">
-              What I Do
-            </h3>
-            {whatIDo.map((item, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="glass-card p-6 rounded-xl group cursor-default"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-orange-500/10 text-orange-400 group-hover:bg-orange-500/20 transition-colors duration-300 flex-shrink-0">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold font-heading text-white mb-1.5 text-lg">{item.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+    <div className="relative overflow-hidden rounded-3xl border border-border bg-surface/60 aspect-[4/3]">
+      {hasImage ? (
+        <img
+          src="/about-workspace.webp"
+          alt="Aditya's workspace"
+          onError={() => setHasImage(false)}
+          data-parallax
+          className="absolute inset-0 h-[115%] w-full object-cover"
+        />
+      ) : (
+        <div data-parallax className="absolute inset-0 h-[115%]">
+          <div aria-hidden className="absolute inset-0" style={{ background: 'radial-gradient(70% 60% at 50% 40%, rgb(var(--c-accent) / 0.35), transparent 70%)' }} />
+          {/* Monitor */}
+          <div className="absolute left-1/2 top-[18%] w-[58%] -translate-x-1/2">
+            <div className="aspect-[16/10] rounded-xl border-2 border-border-strong bg-background/90 p-[6%] shadow-[0_0_60px_rgb(var(--c-accent)/0.5)]">
+              <div className="flex h-full items-center justify-center rounded-md border border-accent/40 bg-accent/10">
+                <span className="font-mono text-4xl font-bold text-accent-dark drop-shadow-[0_0_14px_rgb(var(--c-accent))]">&lt;/&gt;</span>
+              </div>
+            </div>
+            <div className="mx-auto h-6 w-3 bg-border-strong" />
+            <div className="mx-auto h-1.5 w-24 rounded-full bg-border-strong" />
+          </div>
+          {/* Lamp glow */}
+          <div aria-hidden className="absolute right-[10%] top-[30%] h-24 w-24 rounded-full bg-amber-300/30 blur-2xl" />
+          {/* Plant */}
+          <svg aria-hidden viewBox="0 0 80 120" className="absolute bottom-[14%] left-[6%] w-[14%]">
+            <path d="M40 80 C20 60 10 40 18 20 C30 40 38 55 40 80Z" fill="#4c1d95" />
+            <path d="M40 80 C60 60 72 38 62 14 C50 36 42 55 40 80Z" fill="#6d28d9" />
+            <path d="M40 80 C34 50 36 30 40 6 C44 30 46 50 40 80Z" fill="#7c3aed" />
+            <rect x="26" y="78" width="28" height="32" rx="4" fill="#1a133c" stroke="#4e3e8c" />
+          </svg>
+          {/* Desk */}
+          <div aria-hidden className="absolute inset-x-0 bottom-[10%] h-px bg-border-strong" />
         </div>
+      )}
+    </div>
+  );
+};
+
+export const About = () => (
+  <Section id="about">
+    <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div data-reveal="rise"><AboutArt /></div>
+
+      <div>
+        <SectionHeading eyebrow="About me" title="A Developer Who Loves Building & Solving" />
+        <p data-reveal="rise" className="mt-6 max-w-[58ch] text-base sm:text-lg leading-relaxed text-text-muted">
+          I&rsquo;m a final-year B.Tech CSE student at BIT Mesra (2023–2027) with a passion for building real-world
+          products, solving complex problems, and exploring modern technologies.
+        </p>
+        <p data-reveal="rise" className="mt-4 max-w-[58ch] leading-relaxed text-text-muted">
+          I&rsquo;ve interned as a Software Engineer on PayPal&rsquo;s Credit (BNPL) team, shipped a job platform to 500+
+          daily users, and I build with Java, Node.js, React and Generative AI (LLM APIs, RAG).
+        </p>
+
+        <ul className="mt-6 flex flex-wrap gap-2.5" aria-label="How I work">
+          {TRAITS.map(({ Icon, label }) => (
+            <li key={label} data-reveal="rise" className="inline-flex items-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-3.5 py-2 text-sm font-medium text-foreground">
+              <Icon size={16} className="text-accent-dark" aria-hidden /> {label}
+            </li>
+          ))}
+        </ul>
+
+        <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+          {FACTS.map(({ Icon, title, lines }) => (
+            <li key={title} data-reveal="rise" className="glass flex items-center gap-3 rounded-2xl p-4 transition-colors hover:border-accent/70">
+              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent-dark">
+                <Icon size={20} aria-hidden />
+              </span>
+              <span className="text-sm leading-tight">
+                <span className="block font-semibold text-foreground">{title}</span>
+                {lines.map((l, i) => (
+                  <span key={i} className="block text-text-muted">{l}</span>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-    </section>
-  )
-}
+    </div>
+  </Section>
+);
+
+export default About;

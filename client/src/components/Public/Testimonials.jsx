@@ -1,126 +1,133 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import testimonialsData from '../../data/testimonials.json';
-import { Quote, Star, MessageSquare } from 'lucide-react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, PenLine, Quote, Star } from 'lucide-react';
+import Section, { SectionHeading } from './Section';
+import ReviewForm from './ReviewForm';
+import { gsap } from '../../lib/motion';
+import api from '../../api/axios';
+import data from '../../data/testimonials.json';
 
-const Testimonials = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const testimonials = testimonialsData;
+const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 
-    React.useEffect(() => {
-        if (testimonials.length <= 1 || isPaused) return;
-        const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-        }, 4000);
-        return () => clearInterval(interval);
-    }, [testimonials.length, isPaused]);
+export const Testimonials = () => {
+  const [items, setItems] = useState(() => data.filter((t) => t.isApproved !== false));
+  const [formOpen, setFormOpen] = useState(false);
 
-    const slideVariants = {
-        enter: { x: 200, opacity: 0, scale: 0.95 },
-        center: { x: 0, opacity: 1, scale: 1 },
-        exit: { x: -200, opacity: 0, scale: 0.95 }
-    };
+  // Approved reviews from the backend (new submissions only appear after admin approval).
+  useEffect(() => {
+    api.get('/testimonials', { timeout: 15000 })
+      .then(({ data: remote }) => {
+        if (!Array.isArray(remote)) return;
+        setItems((current) => {
+          const seen = new Set(current.map((t) => t._id));
+          const fresh = remote.filter((t) => t.isApproved && !seen.has(t._id));
+          return fresh.length ? [...fresh, ...current] : current;
+        });
+      })
+      .catch(() => { /* keep the bundled reviews */ });
+  }, []);
 
-    return (
-        <section id="testimonials" className="py-20 relative overflow-hidden bg-background">
-            <div className="absolute top-20 left-0 w-96 h-96 bg-orange-500/[0.04] rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-600/[0.03] rounded-full blur-[120px]" />
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const card = useRef(null);
+  const dir = useRef(1);
 
-            <div className="container mx-auto px-6 relative z-10">
-                <div className="mb-12 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className="text-3xl md:text-5xl font-bold font-heading text-white">
-                            Client <span className="gradient-text-orange">Stories</span>
-                        </h2>
-                        <div className="section-divider mt-4" />
-                        <p className="text-gray-500 mt-6 max-w-md mx-auto">
-                            See what others are saying about their experience working with me.
-                        </p>
-                    </motion.div>
-                </div>
+  const go = useCallback((d) => {
+    dir.current = d;
+    setIndex((i) => (i + d + items.length) % items.length);
+  }, [items.length]);
 
-                {/* Slider */}
-                <div
-                    className="relative h-[380px] md:h-[350px] flex items-center justify-center"
-                    onMouseEnter={() => setIsPaused(true)}
-                    onMouseLeave={() => setIsPaused(false)}
-                >
-                    {testimonials.length > 0 ? (
-                        <AnimatePresence mode='wait'>
-                            <motion.div
-                                key={currentIndex}
-                                variants={slideVariants}
-                                initial="enter"
-                                animate="center"
-                                exit="exit"
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="absolute w-full max-w-3xl"
-                            >
-                                <div className="glass-card p-10 md:p-14 rounded-2xl relative mx-auto">
-                                    <Quote className="absolute top-6 left-6 text-orange-500/10" size={50} />
-                                    <Quote className="absolute bottom-6 right-6 text-orange-500/10 rotate-180" size={50} />
+  useEffect(() => {
+    if (paused || items.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const t = setInterval(() => go(1), 6000);
+    return () => clearInterval(t);
+  }, [paused, go, items.length]);
 
-                                    <div className="flex flex-col items-center text-center relative z-10">
-                                        <div className="flex gap-1 mb-6">
-                                            {[...Array(5)].map((_, i) => (
-                                                <Star
-                                                    key={i}
-                                                    size={20}
-                                                    fill={i < testimonials[currentIndex].rating ? "#ff6a00" : "none"}
-                                                    className={i < testimonials[currentIndex].rating ? "text-orange-500" : "text-gray-700"}
-                                                />
-                                            ))}
-                                        </div>
-
-                                        <p className="text-lg md:text-xl font-light text-gray-300 mb-8 italic leading-relaxed max-w-2xl">
-                                            "{testimonials[currentIndex].message}"
-                                        </p>
-
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white font-bold text-base">
-                                                {testimonials[currentIndex].name.charAt(0)}
-                                            </div>
-                                            <div className="text-left">
-                                                <h4 className="font-bold text-white">{testimonials[currentIndex].name}</h4>
-                                                <p className="text-orange-400/70 text-sm">{testimonials[currentIndex].role}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
-                    ) : (
-                        <div className="text-center text-gray-600 flex flex-col items-center gap-3">
-                            <MessageSquare size={32} className="text-gray-700" />
-                            No testimonials yet.
-                        </div>
-                    )}
-                </div>
-
-                {/* Pagination */}
-                {testimonials.length > 1 && (
-                    <div className="flex justify-center gap-2.5 mt-8">
-                        {testimonials.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentIndex(i)}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${
-                                    i === currentIndex
-                                        ? 'w-8 bg-orange-500'
-                                        : 'w-1.5 bg-gray-700 hover:bg-gray-600'
-                                }`}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </section>
+  useLayoutEffect(() => {
+    if (!card.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    gsap.fromTo(
+      card.current,
+      { autoAlpha: 0, x: 60 * dir.current, rotateY: 8 * dir.current },
+      { autoAlpha: 1, x: 0, rotateY: 0, duration: 0.7, ease: 'power3.out' }
     );
+  }, [index]);
+
+  if (!items.length) return null;
+  const t = items[index] || items[0];
+
+  return (
+    <Section id="reviews">
+      <SectionHeading center eyebrow="Reviews" title="What People Say" />
+
+      <div
+        className="relative mx-auto mt-12 max-w-3xl px-14"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Testimonials"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={() => setPaused(false)}
+      >
+        <div style={{ perspective: '1000px' }}>
+          <figure ref={card} aria-live="polite" className="glass-strong relative rounded-3xl p-7 sm:p-10">
+            <Quote size={40} className="text-accent-dark drop-shadow-[0_0_12px_rgb(var(--c-accent))]" aria-hidden />
+            <blockquote className="mt-4 text-base sm:text-lg leading-relaxed text-foreground">
+              &ldquo;{t.message}&rdquo;
+            </blockquote>
+            <figcaption className="mt-7 flex items-center gap-4">
+              <span
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold text-white"
+                style={{ background: 'linear-gradient(135deg, rgb(var(--c-accent)), rgb(var(--c-accent-2)))' }}
+                aria-hidden
+              >
+                {initials(t.name)}
+              </span>
+              <span className="flex-1">
+                <span className="block font-semibold text-foreground">{t.name}</span>
+                <span className="block text-sm text-text-muted">{t.role}</span>
+              </span>
+              <span className="flex gap-0.5" aria-label={`${t.rating || 5} out of 5 stars`}>
+                {Array.from({ length: t.rating || 5 }).map((_, i) => (
+                  <Star key={i} size={15} className="fill-amber-400 text-amber-400" aria-hidden />
+                ))}
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <button type="button" onClick={() => go(-1)} aria-label="Previous review" className="absolute left-0 top-1/2 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full glass-strong hover:border-accent hover:glow">
+          <ChevronLeft size={19} aria-hidden />
+        </button>
+        <button type="button" onClick={() => go(1)} aria-label="Next review" className="absolute right-0 top-1/2 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full glass-strong hover:border-accent hover:glow">
+          <ChevronRight size={19} aria-hidden />
+        </button>
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+        <div className="flex gap-2" role="tablist" aria-label="Choose review">
+          {items.map((it, i) => (
+            <button
+              key={it._id || it.name}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`Review from ${it.name}`}
+              onClick={() => { dir.current = i > index ? 1 : -1; setIndex(i); }}
+              className={`h-2 rounded-full transition-all duration-300 ${i === index ? 'w-7 bg-accent' : 'w-2 bg-border-strong hover:bg-text-subtle'}`}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setFormOpen(true)}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-text-muted transition-colors hover:text-accent-dark"
+        >
+          <PenLine size={14} aria-hidden /> Write a review
+        </button>
+      </div>
+      <ReviewForm open={formOpen} onClose={() => setFormOpen(false)} />
+    </Section>
+  );
 };
 
 export default Testimonials;

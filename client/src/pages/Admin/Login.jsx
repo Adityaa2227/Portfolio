@@ -1,65 +1,55 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Loader2, Lock } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import Logo from '../../components/Common/Logo';
+import { apiError, ErrorNote, Field, inputCls } from '../../components/Admin/ui';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    setBusy(true);
+    setError('');
     try {
-      await login(formData.username, formData.password);
+      await login(form.username, form.password);
       navigate('/admin/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err?.response?.status === 401 ? 'Wrong username or password.' : apiError(err, 'Couldn’t log in. Try again.'));
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
-        {/* Background glow effects */}
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px]" />
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card w-full max-w-md p-8 rounded-2xl relative z-10"
-      >
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">Admin Access</h2>
-        {error && <div className="bg-red-500/20 text-red-500 p-3 rounded mb-4 text-center border border-red-500/30">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-gray-400 mb-2 text-sm">Username</label>
-            <input 
-              type="text" 
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-primary transition-colors"
-              value={formData.username}
-              onChange={(e) => setFormData({...formData, username: e.target.value})}
-            />
-          </div>
-          <div>
-            <label className="block text-gray-400 mb-2 text-sm">Password</label>
-            <input 
-              type="password" 
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-primary transition-colors"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-            />
-          </div>
-          <button 
-            type="submit" 
-            className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-lg transition-colors shadow-lg shadow-primary/25"
-          >
-            Enter System
+    <main className="relative flex min-h-screen items-center justify-center p-4">
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(50% 50% at 50% 30%, rgb(var(--c-accent) / 0.25), transparent 70%)' }} />
+      <div className="relative w-full max-w-sm rounded-3xl glass-strong p-8 shadow-[0_30px_90px_-30px_rgb(var(--c-accent)/0.7)]">
+        <div className="flex flex-col items-center text-center">
+          <Logo className="text-5xl" />
+          <h1 className="mt-5 font-heading text-2xl font-bold">Admin login</h1>
+          <p className="mt-1 text-sm text-text-muted">Manage projects, resume, reviews and messages.</p>
+        </div>
+        <form onSubmit={submit} className="mt-8 space-y-4">
+          <Field label="Username">
+            <input required autoComplete="username" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className={inputCls} />
+          </Field>
+          <Field label="Password">
+            <input required type="password" autoComplete="current-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className={inputCls} />
+          </Field>
+          {error && <ErrorNote>{error}</ErrorNote>}
+          <button type="submit" disabled={busy} className="btn-primary w-full disabled:opacity-70">
+            {busy ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <Lock size={16} aria-hidden />}
+            {busy ? 'Logging in…' : 'Log in'}
           </button>
         </form>
-      </motion.div>
-    </div>
+      </div>
+    </main>
   );
 };
 

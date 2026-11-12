@@ -1,1 +1,52 @@
-{}
+{
+  "name": "Aditya Agarwal",
+  "role": "Software Engineer & Systems Architect",
+  "headline": "Engineering high-concurrency backend services, distributed systems, and modern web architectures.",
+  "location": "Garhwa, Jharkhand, India (Open to Relocation)",
+  "email": "adityaagar324@gmail.com",
+  "phone": "+91 9508664027",
+  "status": "Ex-SWE Intern @ PayPal (Credit BNPL)",
+  "education": {
+    "degree": "Bachelor of Technology, Computer Science and Engineering",
+    "institution": "Birla Institute of Technology (BIT), Mesra",
+    "period": "2023 – 2027",
+    "cgpa": "8.6 / 10"
+  },
+  "summary": "Software Engineer and final-year CSE student at BIT Mesra (CGPA 8.6/10) with internships at PayPal and NS Apps Innovation. Builds full stack and backend systems with Java, Node.js, React.js, REST APIs, and SQL/NoSQL databases, plus Generative AI (LLM APIs, RAG). Shipped JobGrid to 500+ daily users; semifinalist at Flipkart GRiD 8.0 and TCS CodeVita.",
+  "approach": [
+    {
+      "title": "Systems-First Engineering",
+      "desc": "I prioritize concurrency safety, distributed locking, atomic operations, and robust caching over quick hacks."
+    },
+    {
+      "title": "Industrial Test & CI Rigor",
+      "desc": "Experience migrating 40+ scenarios to Cucumber BDD with Feign clients and building real-time JQL failure triage dashboards."
+    },
+    {
+      "title": "Product-Minded Execution",
+      "desc": "From campus transit tracking at BIT Mesra to cryptocurrency e-commerce, I build tools that real users rely on daily."
+    }
+  ],
+  "stats": [
+    {
+      "label": "DSA Solved",
+      "value": "1000+",
+      "desc": "Across LeetCode and GFG"
+    },
+    {
+      "label": "BIT Mesra CGPA",
+      "value": "8.6 / 10",
+      "desc": "Computer Science & Engineering"
+    },
+    {
+      "label": "PayPal SWE Intern",
+      "value": "May–Aug '26",
+      "desc": "Credit (BNPL) Engineering Team"
+    },
+    {
+      "label": "Daily Users Served",
+      "value": "500+",
+      "desc": "Across shipped web & mobile platforms"
+    }
+  ]
+}

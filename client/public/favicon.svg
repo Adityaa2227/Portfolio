@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- "AA" monogram matching the site logo: heavy italic, white + violet, purple glow -->
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" />
+    </filter>
+    <path id="a" fill-rule="evenodd" d="M0 40 L11 0 H21 L32 40 H23.6 L21.4 31.5 H10.6 L8.4 40 Z M12.6 24 H19.4 L16 10.8 Z" />
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#070516" />
+  <!-- Two A's (x 0-57) leaning right via skew; scaled and centred in the tile -->
+  <g transform="translate(5.8 16) scale(0.8) skewX(-12) translate(8.5 0)">
+    <use href="#a" x="25" fill="#8B5CF6" filter="url(#glow)" />
+    <use href="#a" x="0" fill="#F3F0FF" />
+    <use href="#a" x="25" fill="#A78BFA" />
+  </g>
+</svg>

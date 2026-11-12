@@ -1,41 +1,66 @@
-[
-  {
-    "_id": "696509a9a1833f2562691efb",
-    "name": "LeetCode",
-    "handle": "aditya2227",
-    "stats": "300+ problems solved",
-    "desc": "Active in contests and consistent daily practice.",
-    "icon": "https://upload.wikimedia.org/wikipedia/commons/1/19/LeetCode_logo_black.png",
-    "link": "https://leetcode.com/aditya2227",
-    "color": "text-yellow-500",
-    "__v": 0,
-    "createdAt": "2026-01-12T14:48:09.624Z",
-    "updatedAt": "2026-01-12T14:48:09.624Z"
-  },
-  {
-    "_id": "696509a9a1833f2562691efc",
-    "name": "Codeforces",
-    "handle": "Newbie (Max: 1134)",
-    "stats": "Regular contest participant",
-    "desc": "steady rating growth.",
-    "icon": "https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/codeforces-512.png",
-    "link": "#",
-    "color": "text-blue-500",
-    "__v": 0,
-    "createdAt": "2026-01-12T14:48:09.624Z",
-    "updatedAt": "2026-01-12T14:48:09.624Z"
-  },
-  {
-    "_id": "696509a9a1833f2562691efd",
-    "name": "CodeChef",
-    "handle": "2⭐ (Max: 1303)",
-    "stats": "Solving problems",
-    "desc": "joining monthly rated contests.",
-    "icon": "https://yt3.googleusercontent.com/hN4RNGp3WbykRUGlxIauQ0Rtl55z6uaz1wjB7mllzWa1hGEvIUoQfPWmCBuAkr75HmiwXXi07a4=s900-c-k-c0x00ffffff-no-rj",
-    "link": "#",
-    "color": "text-orange-500",
-    "__v": 0,
-    "createdAt": "2026-01-12T14:48:09.624Z",
-    "updatedAt": "2026-01-13T04:42:12.611Z"
-  }
-]
+{
+  "profiles": [
+    {
+      "name": "LeetCode",
+      "handle": "aditya2227",
+      "stats": "600+ Problems Solved",
+      "desc": "Continuous algorithmic problem solving, active contest participation.",
+      "url": "https://leetcode.com/u/aditya2227/",
+      "badge": "Top Problem Solver",
+      "color": "#FFA116"
+    },
+    {
+      "name": "GitHub",
+      "handle": "Adityaa2227",
+      "stats": "20+ Repositories",
+      "desc": "Active open source commits, full-stack microservices, and toolkits.",
+      "url": "https://github.com/Adityaa2227",
+      "badge": "Active Builder",
+      "color": "#C5F16A"
+    }
+  ],
+  "achievements": [
+    {
+      "title": "1st Prize — Technika'24 Hackathon",
+      "organization": "BIT Mesra",
+      "year": "2024",
+      "desc": "Won 1st Prize in Web Development track for real-time collaborative coding platform."
+    },
+    {
+      "title": "2nd Prize — Innovate-A-Thon 3.0",
+      "organization": "BIT Mesra & Coinbase",
+      "year": "2025",
+      "desc": "Secured 2nd Prize out of 200+ teams in a 36-hour Web3 Hackathon ($200 Coinbase sponsorship)."
+    },
+    {
+      "title": "Top 5 Finalist — Hackit'25",
+      "organization": "Amity University",
+      "year": "2025",
+      "desc": "Placed in the Top 5 Teams in Web Development across national university entries."
+    },
+    {
+      "title": "Smart India Hackathon (SIH)",
+      "organization": "Government of India / BIT Mesra",
+      "year": "2024 & 2025",
+      "desc": "Qualified twice for the Internal College Round among institute-shortlisted teams."
+    },
+    {
+      "title": "Semifinalist — TCS CodeVita",
+      "organization": "Tata Consultancy Services",
+      "year": "2025",
+      "desc": "Advanced to the semifinals of the TCS CodeVita Global Coding Competition."
+    },
+    {
+      "title": "Semifinalist — Flipkart GRiD 8.0",
+      "organization": "Flipkart",
+      "year": "2026",
+      "desc": "Reached the semifinals of Flipkart GRiD 8.0, Flipkart's national engineering challenge for students."
+    },
+    {
+      "title": "1000+ DSA Problems Solved",
+      "organization": "LeetCode, GFG",
+      "year": "2023 – Present",
+      "desc": "Rigorous mastery of graph algorithms, dynamic programming, trees, and concurrency primitives."
+    }
+  ]
+}

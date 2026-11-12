@@ -1,64 +1,51 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import codingProfilesData from '../../data/codingProfiles.json';
+import Section from './Section';
+import codingData from '../../data/codingProfiles.json';
 
-const CodingProfiles = () => {
+export const CodingProfiles = () => {
+  const { profiles = [], achievements = [] } = codingData;
+
   return (
-    <section className="py-20 relative text-white overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-orange-500/[0.03] rounded-full blur-[130px]" />
-
-      <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-10 text-center"
-        >
-          <h2 className="text-3xl md:text-5xl font-bold font-heading mb-2">
-            Coding <span className="gradient-text-orange">Profiles</span>
-          </h2>
-          <div className="section-divider" />
-          <p className="text-gray-500 mt-6 max-w-lg mx-auto">
-            My competitive programming journey across platforms
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {codingProfilesData.map((profile, idx) => (
-            <motion.a
-              key={profile._id || idx}
-              href={profile.link}
+    <Section id="achievements" name="Recognition" title="Hackathon wins and a steady contest habit.">
+      <ul className="grid grid-cols-2 lg:grid-cols-4 border-y border-border">
+        {profiles.map((p, i) => (
+          <li
+            key={p.name}
+            className={`border-border ${i % 2 ? 'border-l' : ''} ${i > 0 ? 'lg:border-l' : ''} ${i > 1 ? 'border-t lg:border-t-0' : ''}`}
+          >
+            <a
+              href={p.url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="glass-card rounded-2xl p-8 flex flex-col items-center text-center group cursor-pointer"
+              className="group flex h-full flex-col gap-1 p-5 transition-colors hover:bg-surface"
             >
-              <div className="w-14 h-14 mb-6 rounded-xl bg-orange-500/10 p-2.5 group-hover:bg-orange-500/20 transition-colors duration-300">
-                <img src={profile.icon} alt={profile.name} className="w-full h-full object-contain" />
-              </div>
+              <span className="flex items-center justify-between text-sm text-text-muted">
+                {p.name}
+                <ArrowUpRight size={15} className="text-text-subtle transition-colors group-hover:text-accent" aria-hidden />
+              </span>
+              <span className="mt-2 font-heading text-xl font-bold leading-tight text-foreground transition-colors group-hover:text-accent">
+                {p.stats.replace('⭐', '★')}
+              </span>
+              <span className="font-mono text-xs text-text-subtle">@{p.handle}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
 
-              <h3 className="text-xl font-bold font-heading mb-1 group-hover:text-orange-400 transition-colors duration-300">{profile.name}</h3>
-              <p className="text-gray-500 text-sm mb-4 font-mono">{profile.handle}</p>
-
-              <p className="font-semibold text-white mb-1.5 text-lg">{profile.stats}</p>
-              <p className="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-3">
-                {profile.desc}
-              </p>
-
-              <div className="flex items-center gap-1.5 text-orange-400 text-sm font-semibold mt-auto">
-                <span>Visit Profile</span>
-                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-              </div>
-            </motion.a>
-          ))}
-        </div>
-      </div>
-    </section>
+      <ol className="mt-14">
+        {achievements.map((a) => (
+          <li key={a.title} className="grid gap-2 border-b border-border py-6 first:pt-0 sm:grid-cols-[8rem_1fr] sm:gap-8">
+            <span className="font-mono text-sm text-accent">{a.year}</span>
+            <div>
+              <h3 className="font-heading text-lg font-semibold text-foreground">{a.title.replace(' — ', ', ')}</h3>
+              <p className="text-sm text-text-subtle">{a.organization}</p>
+              <p className="mt-2 max-w-[65ch] leading-relaxed text-text-muted">{a.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Section>
   );
 };
 

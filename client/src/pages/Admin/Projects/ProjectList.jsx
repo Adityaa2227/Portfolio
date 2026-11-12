@@ -1,157 +1,146 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Plus, Pencil, Trash2, GripVertical, FolderGit2, ExternalLink, Star, Eye, EyeOff } from 'lucide-react';
 import api from '../../../api/axios';
-import { Plus, Edit2, Trash2, Github, ExternalLink } from 'lucide-react';
-import { motion } from 'framer-motion';
-import {
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { SortableItem } from '../../../components/Admin/SortableItem';
+import { apiError, Badge, Empty, ErrorNote, PageHeader, Spinner, fileUrl } from '../../../components/Admin/ui';
+
+const Row = ({ project, onToggle, onDelete }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project._id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
+
+  return (
+    <li ref={setNodeRef} style={style} className={`flex items-center gap-3 rounded-2xl glass p-3 sm:gap-4 sm:p-4 ${isDragging ? 'z-10 border-accent shadow-xl' : ''}`}>
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        aria-label={`Reorder ${project.title}`}
+        className="cursor-grab touch-none rounded-lg p-1.5 text-text-subtle hover:bg-accent/15 hover:text-foreground active:cursor-grabbing"
+      >
+        <GripVertical size={18} aria-hidden />
+      </button>
+
+      <div className="hidden h-14 w-24 shrink-0 overflow-hidden rounded-lg border border-border bg-surface-muted sm:block">
+        {project.projectImage && <img src={fileUrl(project.projectImage)} alt="" className="h-full w-full object-cover object-top" loading="lazy" />}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <p className="flex flex-wrap items-center gap-2">
+          <Link to={`/admin/projects/edit/${project._id}`} className="truncate font-semibold text-foreground hover:text-accent-dark">{project.title}</Link>
+          {project.isPublished ? <Badge tone="success">Published</Badge> : <Badge>Draft</Badge>}
+          {project.isFeatured && <Badge tone="accent"><Star size={11} className="fill-current" aria-hidden /> Featured</Badge>}
+        </p>
+        <p className="mt-0.5 truncate text-sm text-text-muted">{project.category} · {(project.technologies || []).slice(0, 4).join(', ')}</p>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onToggle(project, 'isFeatured')}
+          title={project.isFeatured ? 'Remove from featured' : 'Mark as featured'}
+          aria-label={project.isFeatured ? `Remove ${project.title} from featured` : `Feature ${project.title}`}
+          className={`rounded-lg p-2 hover:bg-accent/15 ${project.isFeatured ? 'text-amber-300' : 'text-text-subtle hover:text-foreground'}`}
+        >
+          <Star size={17} className={project.isFeatured ? 'fill-current' : ''} aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => onToggle(project, 'isPublished')}
+          title={project.isPublished ? 'Hide from site' : 'Publish'}
+          aria-label={project.isPublished ? `Hide ${project.title}` : `Publish ${project.title}`}
+          className="rounded-lg p-2 text-text-subtle hover:bg-accent/15 hover:text-foreground"
+        >
+          {project.isPublished ? <Eye size={17} aria-hidden /> : <EyeOff size={17} aria-hidden />}
+        </button>
+        {project.slug && (
+          <a href={`/projects/${project.slug}`} target="_blank" rel="noopener noreferrer" title="View on site" aria-label={`View ${project.title} on site`} className="hidden rounded-lg p-2 text-text-subtle hover:bg-accent/15 hover:text-foreground sm:inline-flex">
+            <ExternalLink size={17} aria-hidden />
+          </a>
+        )}
+        <Link to={`/admin/projects/edit/${project._id}`} title="Edit" aria-label={`Edit ${project.title}`} className="rounded-lg p-2 text-text-subtle hover:bg-accent/15 hover:text-foreground">
+          <Pencil size={17} aria-hidden />
+        </Link>
+        <button type="button" onClick={() => onDelete(project)} title="Delete" aria-label={`Delete ${project.title}`} className="rounded-lg p-2 text-red-300 hover:bg-red-500/10">
+          <Trash2 size={17} aria-hidden />
+        </button>
+      </div>
+    </li>
+  );
+};
 
 const ProjectList = () => {
-  const [projects, setProjects] = useState([]);
-  
+  const [projects, setProjects] = useState(null);
+  const [error, setError] = useState('');
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  const load = () =>
+    api.get('/projects/admin')
+      .then(({ data }) => setProjects(data))
+      .catch((err) => { setProjects([]); setError(apiError(err, 'Couldn’t load projects.')); });
 
-  const fetchProjects = async () => {
-    const { data } = await api.get('/projects/admin');
-    setProjects(data);
-  };
+  useEffect(() => { load(); }, []);
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      await api.delete(`/projects/${id}`);
-      fetchProjects();
+  const onToggle = async (project, field) => {
+    const next = !project[field];
+    setProjects((list) => list.map((p) => (p._id === project._id ? { ...p, [field]: next } : p)));
+    try {
+      await api.put(`/projects/${project._id}`, { [field]: next });
+    } catch (err) {
+      setError(apiError(err, 'Couldn’t save that change.'));
+      load();
     }
   };
 
-  const handleDragEnd = async (event) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      setProjects((items) => {
-        const oldIndex = items.findIndex((i) => i._id === active.id);
-        const newIndex = items.findIndex((i) => i._id === over.id);
-        
-        const newItems = arrayMove(items, oldIndex, newIndex);
-        
-        // Prepare data for backend: send ALL items with their new index as order
-        // This ensures the custom order is saved
-        const updates = newItems.map((item, index) => ({
-            _id: item._id,
-            order: index
-        }));
-
-        // Fire and forget (or await if you want to show loading)
-        api.put('/projects/reorder', { items: updates })
-            .catch(err => console.error('Reorder failed', err));
-
-        return newItems;
-      });
+  const onDelete = async (project) => {
+    if (!window.confirm(`Delete “${project.title}”? This can’t be undone.`)) return;
+    try {
+      await api.delete(`/projects/${project._id}`);
+      setProjects((list) => list.filter((p) => p._id !== project._id));
+    } catch (err) {
+      setError(apiError(err, 'Couldn’t delete the project.'));
     }
+  };
+
+  const onDragEnd = ({ active, over }) => {
+    if (!over || active.id === over.id) return;
+    setProjects((items) => {
+      const next = arrayMove(items, items.findIndex((i) => i._id === active.id), items.findIndex((i) => i._id === over.id));
+      api.put('/projects/reorder', { items: next.map((p, order) => ({ _id: p._id, order })) })
+        .catch((err) => setError(apiError(err, 'Couldn’t save the new order.')));
+      return next;
+    });
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Projects</h1>
-        <Link 
-          to="/admin/projects/new" 
-          className="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
-        >
-          <Plus size={20} />
-          <span>Add Project</span>
-        </Link>
-      </div>
-
-      <DndContext 
-        sensors={sensors} 
-        collisionDetection={closestCenter} 
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext 
-            items={projects.map(p => p._id)} 
-            strategy={rectSortingStrategy}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {projects.map((project) => (
-              <SortableItem key={project._id} id={project._id}>
-                  <div 
-                    className="glass-panel overflow-hidden rounded-xl group relative h-full flex flex-col"
-                  >
-                        {/* Image Preview */}
-                        <div className="h-48 bg-gray-800 relative overflow-hidden shrink-0">
-                            {project.projectImage ? (
-                                <img src={project.projectImage.startsWith('http') ? project.projectImage : `${import.meta.env.PROD ? 'https://portfolio-backend-ha1q.onrender.com' : 'http://localhost:5000'}${project.projectImage}`} alt={project.title} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-600">No Image</div>
-                            )}
-                            <div className="absolute top-2 right-2 flex gap-2">
-                                <span className={`px-2 py-1 text-xs rounded border ${project.isPublished ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'}`}>
-                                    {project.isPublished ? 'Published' : 'Draft'}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="p-4 flex flex-col flex-1">
-                        <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                        <p className="text-gray-400 text-sm line-clamp-2 mb-4">{project.description}</p>
-                        
-                        <div className="flex gap-2 mb-4 flex-wrap">
-                                {project.technologies.slice(0, 3).map(t => (
-                                    <span key={t} className="text-xs bg-white/5 px-2 py-1 rounded text-gray-300">{t}</span>
-                                ))}
-                                {project.technologies.length > 3 && <span className="text-xs text-gray-500">+{project.technologies.length - 3}</span>}
-                        </div>
-
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                <div className="flex gap-3">
-                                    {project.githubLink && <a href={project.githubLink} target="_blank" className="text-gray-400 hover:text-white"><Github size={18}/></a>}
-                                    {project.liveLink && <a href={project.liveLink} target="_blank" className="text-gray-400 hover:text-white"><ExternalLink size={18}/></a>}
-                                </div>
-                                <div className="flex gap-2">
-                                    <Link 
-                                        to={`/admin/projects/edit/${project._id}`}
-                                        className="p-2 hover:bg-white/10 rounded-lg text-blue-400 transition-colors"
-                                    >
-                                        <Edit2 size={18} />
-                                    </Link>
-                                    <button 
-                                        onClick={() => handleDelete(project._id)}
-                                        className="p-2 hover:bg-white/10 rounded-lg text-red-400 transition-colors"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                        </div>
-                        </div>
-                  </div>
-              </SortableItem>
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-    </div>
+    <>
+      <PageHeader
+        title="Projects"
+        description="Drag the handle to change the order on the site. The star features a project on the homepage; the eye shows or hides it."
+        actions={<Link to="/admin/projects/new" className="btn-primary"><Plus size={16} aria-hidden /> New project</Link>}
+      />
+      {error && <div className="mb-4"><ErrorNote>{error}</ErrorNote></div>}
+      {projects === null ? (
+        <Spinner label="Loading projects…" />
+      ) : projects.length === 0 ? (
+        <Empty Icon={FolderGit2} title="No projects yet" action={<Link to="/admin/projects/new" className="btn-primary"><Plus size={16} aria-hidden /> Add your first project</Link>}>
+          Projects you add here appear on the site straight away.
+        </Empty>
+      ) : (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={projects.map((p) => p._id)} strategy={verticalListSortingStrategy}>
+            <ul className="space-y-3">
+              {projects.map((p) => <Row key={p._id} project={p} onToggle={onToggle} onDelete={onDelete} />)}
+            </ul>
+          </SortableContext>
+        </DndContext>
+      )}
+    </>
   );
 };
 

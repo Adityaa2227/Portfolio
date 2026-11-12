@@ -1,358 +1,256 @@
 [
   {
+    "_id": "6965d08a451bbe30df85de60",
+    "title": "FlexPass",
+    "slug": "flexpass",
+    "shortDescription": "Pay-per-use microservices marketplace with unified wallet, Redis distributed locking, and Groq AI integrations.",
+    "description": "Architected a pay-per-use marketplace with a unified wallet and Razorpay integration, supporting 5+ digital service types with time- and usage-based access control over a modular Node.js/Express backend.",
+    "problem": "Traditional SaaS models lock users into inflexible recurring subscriptions even when they only need intermittent access to digital tools, leading to wasted spend and high drop-off rates.",
+    "solution": "Built a unified pay-as-you-go microservice wallet that meters usage in real-time with atomic balance deductions and distributed locking to completely eliminate race conditions.",
+    "features": [
+      "Unified multi-service wallet with Razorpay payment gateway integration",
+      "Redis-based distributed locking & token bucket rate limiting (cutting unauthorized attempts by 80%)",
+      "Triple authentication pipeline: JWT, Google OAuth 2.0, and Email OTP verification",
+      "Real-time analytics dashboard with Recharts for revenue tracking and system health monitoring",
+      "5% automated cashback engine and double-sided referral mechanism",
+      "Live support chat with Groq AI-powered service recommendations"
+    ],
+    "metrics": "80% reduction in unauthorized attempts • 60% fewer invalid session errors",
+    "technologies": ["React.js", "Node.js", "Express", "MongoDB", "Redis", "Socket.io", "JWT", "Google OAuth", "Razorpay", "Groq AI"],
+    "category": "Full Stack",
+    "tags": ["Microservices", "Redis", "Fintech", "Full Stack", "AI"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://flexpass.demo",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182234_77LlbCXeQ.png",
+    "isFeatured": true,
+    "isPublished": true,
+    "order": 0
+  },
+  {
+    "_id": "6965d08a451bbe30df85de61",
+    "title": "JobGrid",
+    "slug": "jobgrid",
+    "shortDescription": "AI-powered engineering job aggregation portal serving 500+ daily users across web and mobile.",
+    "description": "Engineered an AI-powered job portal for software engineering roles aggregating listings from 10+ sources via automated scrapers, a Telegram bot, and cron-scheduled ingestion pipelines.",
+    "problem": "Job listings are fragmented across dozens of career boards with inconsistent formats, obscure tech stack requirements, and spam postings that waste candidate hours.",
+    "solution": "Developed an automated aggregation platform that parses unstructured postings using Groq (LLaMA 3) NLP into structured metadata, seniority levels, and tech stacks with real-time push alerts.",
+    "features": [
+      "Multi-source automated scraper & Telegram bot pipeline with cron-scheduled background ingestion",
+      "Groq (LLaMA 3) NLP parsing to extract tech stacks, seniority levels, and compensation metadata",
+      "Smart faceted filters by graduation batch, seniority, tech stack, and employment type",
+      "Real-time hiring market analytics dashboard visualizing demand trends using Recharts",
+      "Community discussion forum and admin moderation console with automated spam quarantine",
+      "Cross-platform mobile app built with Capacitor supporting native push notifications"
+    ],
+    "metrics": "500+ daily active users • 10+ aggregated job sources • Real-time NLP parsing",
+    "technologies": ["Next.js 15", "Node.js", "Express", "MongoDB", "Groq AI", "Telegram Bot", "Capacitor", "Recharts"],
+    "category": "Full Stack",
+    "tags": ["Next.js 15", "AI/NLP", "Automation", "Mobile", "Full Stack"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://jobgrid.demo",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183928_2KQOFyb1D.png",
+    "isFeatured": true,
+    "isPublished": true,
+    "order": 1
+  },
+  {
+    "_id": "6965d08a451bbe30df85de62",
+    "title": "WhereIsMyBitBus",
+    "slug": "whereismybitbus",
+    "shortDescription": "Real-time campus transit telemetry platform serving 300+ daily commuters at BIT Mesra.",
+    "description": "Built a real-time bus tracking platform (React, JavaScript, Firebase) solving daily transit uncertainty for 300+ students and staff at BIT Mesra.",
+    "problem": "Campus transit schedules at BIT Mesra were unpredictable, resulting in hundreds of students waiting at stops with zero visibility into bus location or delays.",
+    "solution": "Created a lightweight real-time transit telemetry map that streams driver GPS coordinates directly to student devices with sub-5-second latency using OpenStreetMap and Firebase.",
+    "features": [
+      "Live bus tracking on interactive OpenStreetMap with 98% spatial accuracy",
+      "5-second real-time coordinate streaming optimized to minimize database write volume",
+      "Driver location broadcasting portal with low-battery GPS wake-lock mode",
+      "Firebase Authentication for secure student access across campus domains",
+      "Route overview with stop arrival estimates and delay alerts"
+    ],
+    "metrics": "300+ campus users • 98% live location accuracy • 5-second coordinate streaming",
+    "technologies": ["React", "JavaScript", "Firebase", "Chakra UI", "OpenStreetMap"],
+    "category": "Full Stack",
+    "tags": ["Real-Time", "Geolocation", "Firebase", "Transit"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://whereismybitbus.demo",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183833_zmN94S7V_.png",
+    "isFeatured": true,
+    "isPublished": true,
+    "order": 2
+  },
+  {
+    "_id": "6965d08a451bbe30df85de4a",
+    "title": "Cryp2Sale",
+    "slug": "cryp2sale",
+    "shortDescription": "Global cryptocurrency merchandise and products e-commerce platform with 100+ daily international users.",
+    "description": "A global e-commerce platform focused on cryptocurrency products, trusted by over 100+ daily international users for secure and seamless transactions, offering an intuitive and user-friendly shopping experience.",
+    "problem": "Crypto enthusiasts lacked a streamlined, reliable portal to purchase authentic hardware wallets and merchandise using diverse payment gateways.",
+    "solution": "Delivered a fully responsive commerce experience with secure payment processing, inventory tracking, and localized checkout workflows.",
+    "features": [
+      "International shopping cart and checkout architecture",
+      "Integrated multi-currency payment gateways including cryptocurrency checkout",
+      "Optimized product catalog with instant search and category filtering",
+      "SEO-optimized product pages and automated order tracking"
+    ],
+    "metrics": "100+ daily international shoppers • Multi-currency checkout",
+    "technologies": ["E-commerce", "WordPress", "Elementor", "Payment Gateway", "Cryptocurrency"],
+    "category": "E-commerce",
+    "tags": ["E-commerce", "WordPress", "Elementor", "Payment Gateway"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://cryp2sale.com",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182234_77LlbCXeQ.png",
+    "isFeatured": true,
+    "isPublished": true,
+    "order": 3
+  },
+  {
+    "_id": "6965d08a451bbe30df85de4b",
+    "title": "Frontend Code Editor",
+    "slug": "frontend-code-editor",
+    "shortDescription": "In-browser live code editor providing real-time HTML, CSS, and JavaScript preview for 100+ active coders.",
+    "description": "An interactive frontend code editor that enables real-time HTML, CSS, and JavaScript preview. The tool has received positive feedback from over 100 users, supporting their coding practice sessions.",
+    "problem": "Setting up local dev environments and bundlers introduces friction for students practicing UI prototyping and learning web development.",
+    "solution": "Engineered an in-browser sandbox with sandboxed iframe rendering, live state synchronisation, and syntax highlighting.",
+    "features": [
+      "Real-time synchronized execution of HTML, CSS, and JavaScript",
+      "Sandboxed iframe execution protecting against DOM leaks",
+      "Code snippet sharing and session export",
+      "Customizable editor layout and themes"
+    ],
+    "metrics": "100+ active practice coders • Real-time instant rendering",
+    "technologies": ["HTML", "CSS", "JavaScript", "React"],
+    "category": "Tool",
+    "tags": ["Developer Tool", "React", "Live Preview"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://code-editor-demo.vercel.app",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183956_mEgi42es6.png",
+    "isFeatured": true,
+    "isPublished": true,
+    "order": 4
+  },
+  {
+    "_id": "6965d08a451bbe30df85de4e",
+    "title": "Leetcode-Replica",
+    "slug": "leetcode-replica",
+    "shortDescription": "Hackathon-winning algorithm testing platform with real-time code editor and instant test case validation.",
+    "description": "A web-based platform inspired by LeetCode, built for practicing coding problems interactively. It features algorithm challenges, a real-time code editor, and instant solution validation. Created during a hackathon — and won.",
+    "problem": "College coding communities needed a tailored platform for mock technical interviews with curated questions and instantaneous test-case evaluation.",
+    "solution": "Developed a full-stack algorithm runner with multi-language test execution, leaderboard ranking, and question catalog.",
+    "features": [
+      "Interactive code editing and test execution harness",
+      "Automated test case verification and execution time tracking",
+      "Dynamic leaderboard and user submission history",
+      "Won 1st Prize at university hackathon competition"
+    ],
+    "metrics": "Hackathon 1st Prize Winner • Live solution validation",
+    "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap"],
+    "category": "Full Stack",
+    "tags": ["Hackathon Winner", "Algorithms", "DSA"],
+    "githubLink": "https://github.com/Adityaa2227/Leetcode-Replica",
+    "liveLink": "https://leetcode-replica.vercel.app/Dashboard.html",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_184027_6fpCGfbvT.png",
+    "isFeatured": false,
+    "isPublished": true,
+    "order": 5
+  },
+  {
+    "_id": "6965d08a451bbe30df85de4c",
+    "title": "Jeevandan",
+    "slug": "jeevandan",
+    "shortDescription": "Academic resource sharing platform for BIT Mesra students with Telegram bot integration.",
+    "description": "An intuitive online platform for BIT Mesra students, providing 50+ users easy access to a vast collection of study materials across different branches and academic years. Completed in just three weeks.",
+    "problem": "Academic study materials at BIT Mesra were scattered across drives and chat groups with broken links and lost syllabus references.",
+    "solution": "Centralized semester-wise notes, previous year question papers, and lab manuals with automated Telegram bot file delivery.",
+    "features": [
+      "Branch- and semester-wise categorized repository of lecture notes & PYQs",
+      "Integrated Telegram bot for automated document downloads",
+      "Student upload review flow with verified contributor badges"
+    ],
+    "metrics": "50+ active student users across branches",
+    "technologies": ["React", "Node.js", "MongoDB", "Telegram Bot"],
+    "category": "Full Stack",
+    "tags": ["Education", "Telegram Bot", "React", "Node.js"],
+    "githubLink": "https://github.com/Adityaa2227",
+    "liveLink": "https://jeevandan.vercel.app",
+    "youtubeVideoUrl": null,
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182127_9ugFS3X_F.png",
+    "isFeatured": false,
+    "isPublished": true,
+    "order": 6
+  },
+  {
     "_id": "6965d08a451bbe30df85de54",
     "title": "BMI Calculator",
+    "slug": "bmi-calculator",
+    "shortDescription": "Responsive health calculation utility with instant classification and clean UI.",
     "description": "A simple and user-friendly Body Mass Index (BMI) Calculator web application built with HTML, CSS, and JavaScript. Instantly calculate your BMI and determine your health category with a clean, responsive interface.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "category": "Tool",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "tags": ["Tool", "JavaScript"],
     "githubLink": "https://github.com/Adityaa2227/BMI-Calculator",
     "liveLink": "https://adityaa2227.github.io/BMI-Calculator/",
     "youtubeVideoUrl": "",
     "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182234_77LlbCXeQ.png",
     "isFeatured": false,
     "isPublished": true,
-    "order": 10,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T14:44:13.951Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de4a",
-    "title": "Cryp2Sale",
-    "description": "A global e-commerce platform focused on cryptocurrency products, trusted by over 100+ daily international users for secure and seamless transactions, offering an intuitive and user-friendly shopping experience.",
-    "technologies": [
-      "E-commerce",
-      "Wordpress",
-      "Elementor",
-      "Payment Gateway",
-      "Cryptocurrency"
-    ],
-    "category": "E-commerce",
-    "tags": [
-      "E-commerce",
-      "Wordpress",
-      "Elementor",
-      "Payment Gateway",
-      "Cryptocurrency"
-    ],
-    "githubLink": "https://github.com/Adityaa2227",
-    "liveLink": "https://cryp2sale.com",
-    "youtubeVideoUrl": null,
-    "projectImage": "/projects/Cryp2ale.png",
-    "isFeatured": true,
-    "isPublished": true,
-    "order": 0,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.864Z",
-    "updatedAt": "2026-01-13T04:56:42.864Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de4b",
-    "title": "Frontend Code Editor",
-    "description": "An interactive frontend code editor that enables real-time HTML, CSS, and JavaScript preview. The tool has received positive feedback from over 100 users, supporting their coding practice sessions.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "React"
-    ],
-    "category": "Tool",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "React"
-    ],
-    "githubLink": "https://github.com/yourusername/code-editor",
-    "liveLink": "https://code-editor-demo.vercel.app",
-    "youtubeVideoUrl": null,
-    "projectImage": "/projects/Frontend Code Editor.png",
-    "isFeatured": true,
-    "isPublished": true,
-    "order": 1,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.865Z",
-    "updatedAt": "2026-01-13T04:56:42.865Z"
+    "order": 7
   },
   {
     "_id": "6965d08a451bbe30df85de52",
     "title": "Guess the Number",
+    "slug": "guess-the-number",
+    "shortDescription": "Interactive number deduction game with attempt limits and dynamic feedback.",
     "description": "A fun and interactive number guessing game built with HTML, CSS, and JavaScript. Try to guess the secret number between 1 and 100 in just 10 attempts.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "category": "Game",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "tags": ["Game", "JavaScript"],
     "githubLink": "https://github.com/Adityaa2227/Guess-The-Number",
     "liveLink": "https://adityaa2227.github.io/Guess-The-Number/",
     "youtubeVideoUrl": "",
     "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183928_2KQOFyb1D.png",
     "isFeatured": false,
     "isPublished": true,
-    "order": 8,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T14:44:30.341Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de4c",
-    "title": "Jeevandan",
-    "description": "An intuitive online platform for BIT Mesra students, providing 50+ users easy access to a vast collection of study materials across different branches and academic years. Completed in just three weeks.",
-    "technologies": [
-      "React",
-      "Node.js",
-      "MongoDB",
-      "Education"
-    ],
-    "category": "Full Stack",
-    "tags": [
-      "React",
-      "Node.js",
-      "MongoDB",
-      "Education"
-    ],
-    "githubLink": "https://github.com/yourusername/jeevandan",
-    "liveLink": "https://jeevandan.vercel.app",
-    "youtubeVideoUrl": null,
-    "projectImage": "/projects/Jeevandan.png",
-    "isFeatured": true,
-    "isPublished": true,
-    "order": 2,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-01-13T04:56:42.866Z"
+    "order": 8
   },
   {
     "_id": "6965d08a451bbe30df85de53",
     "title": "Digital Clock",
+    "slug": "digital-clock",
+    "shortDescription": "Precision real-time digital clock with responsive interface.",
     "description": "A simple and elegant Digital Clock web application built with HTML, CSS, and JavaScript. This project displays the current time in real-time with a clean and responsive interface.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "category": "Mini Project",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "tags": ["Mini Project", "JavaScript"],
     "githubLink": "https://github.com/Adityaa2227/Digital-Clock",
     "liveLink": "https://adityaa2227.github.io/Digital-Clock/",
     "youtubeVideoUrl": "",
     "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183833_zmN94S7V_.png",
     "isFeatured": false,
     "isPublished": true,
-    "order": 9,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T14:44:27.237Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de51",
-    "title": "New Year Countdown",
-    "description": "This is a simple and beautiful New Year Countdown web application built using HTML, CSS, and JavaScript. It features a countdown timer that displays the time remaining until the New Year, along with a festive design.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "category": "Mini Project",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/New-Year-Countdown",
-    "liveLink": "https://adityaa2227.github.io/New-Year-CountDown/",
-    "youtubeVideoUrl": "",
-    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_183956_mEgi42es6.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 7,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T14:44:31.493Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de55",
-    "title": "Random Color Generator",
-    "description": "A fun and interactive web application that generates random RGB colors on button click. Built using HTML, CSS, and JavaScript, this project is perfect for beginners looking to strengthen their DOM manipulation skills.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "category": "Mini Project",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/Random-Color-Generator",
-    "liveLink": "https://adityaa2227.github.io/Random-Color-Generator/",
-    "youtubeVideoUrl": "",
-    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182357_JABm7VUi1.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 11,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T13:46:36.173Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de50",
-    "title": "Dice Roll Simulator",
-    "description": "A simple and interactive Dice Roll Simulator built using HTML, CSS, and JavaScript. This project allows users to simulate rolling dice with a click, making it a fun tool for games, learning, or just passing the time.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "category": "Game",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/Dice-Roll-Simulator",
-    "liveLink": "https://adityaa2227.github.io/Dice-Roll-Simulator/",
-    "youtubeVideoUrl": "",
-    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_184027_6fpCGfbvT.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 6,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T14:44:31.036Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de4d",
-    "title": "Portfolio Website",
-    "description": "A fully responsive personal website to showcase web development projects, using HTML, CSS, JavaScript, and Bootstrap. Optimized for performance and user experience.",
-    "technologies": [
-      "React",
-      "Tailwind CSS",
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "category": "Frontend",
-    "tags": [
-      "React",
-      "Tailwind CSS",
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/Portfolio",
-    "liveLink": "https://adityaagarwalportfolio.vercel.app/",
-    "youtubeVideoUrl": null,
-    "projectImage": "/projects/Portfolio Website.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 3,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-01-13T04:56:42.866Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de56",
-    "title": "Cat Facts & Dog Images Generator",
-    "description": "A simple and delightful web application that displays random cat facts and cute dog images using public APIs. Built using HTML, CSS, and JavaScript (with Axios for API requests).",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "Axios",
-      "API"
-    ],
-    "category": "API Integration",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "Axios",
-      "API"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/Cat-Fact-Dog-Image",
-    "liveLink": "https://adityaa2227.github.io/Cat-Fact-Dog-Image/",
-    "youtubeVideoUrl": "",
-    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_182127_9ugFS3X_F.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 12,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T13:46:02.007Z"
-  },
-  {
-    "_id": "6965d08a451bbe30df85de4e",
-    "title": "Leetcode-Replica",
-    "description": "A web-based platform inspired by LeetCode, built for practicing coding problems interactively. It features algorithm challenges, a real-time code editor, and instant solution validation. Developed using HTML, CSS, and JavaScript, its ideal for beginners to enhance their coding skills. Created during a hackathon — and won.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "Bootstrap"
-    ],
-    "category": "Full Stack",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "Bootstrap"
-    ],
-    "githubLink": "https://github.com/Adityaa2227/Leetcode-Replica",
-    "liveLink": "https://leetcode-replica.vercel.app/Dashboard.html",
-    "youtubeVideoUrl": null,
-    "projectImage": "/projects/Leetcode-Replica.png",
-    "isFeatured": false,
-    "isPublished": true,
-    "order": 4,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-01-13T04:56:42.866Z"
+    "order": 9
   },
   {
     "_id": "6965d08a451bbe30df85de4f",
     "title": "Simon Says Game",
-    "description": "A fun and interactive Simon Says Game built using HTML, CSS, and JavaScript. This memory game challenges users to repeat a randomly generated sequence of button presses. Perfect for beginners looking to practice DOM manipulation and game logic.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "slug": "simon-says-game",
+    "shortDescription": "Classic memory pattern game testing user visual and auditory sequence recall.",
+    "description": "A fun and interactive Simon Says Game built using HTML, CSS, and JavaScript. This memory game challenges users to repeat a randomly generated sequence of button presses.",
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "category": "Game",
-    "tags": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "tags": ["Game", "Memory", "JavaScript"],
     "githubLink": "https://github.com/Adityaa2227/Simon-Says-Game",
     "liveLink": "https://adityaa2227.github.io/Simon-Says-Game/",
     "youtubeVideoUrl": "https://www.youtube.com/watch?v=fJ9nrRtpnuA",
-    "projectImage": "/projects/Simon Says Game.png",
+    "projectImage": "https://ik.imagekit.io/allymdh57/portfolio/projects/Screenshot_2026-03-06_184027_6fpCGfbvT.png",
     "isFeatured": false,
     "isPublished": true,
-    "order": 5,
-    "__v": 0,
-    "createdAt": "2026-01-13T04:56:42.866Z",
-    "updatedAt": "2026-03-06T13:27:33.384Z"
+    "order": 10
   }
 ]

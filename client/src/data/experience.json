@@ -1,101 +1,111 @@
 [
   {
     "_id": "6965cdf5c7e41a0c69f7d952",
-    "role": "Upcoming Software Engineer Intern (SWE)",
+    "role": "Software Engineer (SWE) Intern",
     "company": "PayPal",
-    "duration": "May 2026 – July 2026 (Upcoming)",
-    "description": "Selected for a Software Engineer Internship at PayPal, scheduled to begin in May. Will be working on production-grade systems alongside experienced engineers, contributing to feature development, code quality, and performance improvements while following industry-standard engineering practices.",
+    "duration": "May 2026 – Aug 2026",
+    "location": "Bangalore, Karnataka, India",
+    "team": "Credit (Buy Now, Pay Later)",
+    "description": "Software Engineer Intern on the Credit (Buy Now, Pay Later) team, working on test automation, CI reliability and code-review tooling.",
+    "responsibilities": [
+      "As part of the Credit (BNPL) team, migrated 100+ functional test scenarios from TestNG/RestAssured to Cucumber (BDD).",
+      "Automated multi-tenant API testing in Java with Feign clients across Apache Fineract services, expanding test coverage.",
+      "Eliminated flaky CI failures (down to 0%) by fixing tenant timezone mismatches (UTC vs partner-product timezone) in tests.",
+      "Built a PR reviewer-assignment and workload-checker tool for 23+ repos with automated pending-review DM reminders.",
+      "Integrated Claude into the code review workflow to auto-generate review feedback and change requests on pull requests."
+    ],
     "skills": [
-      "Data Structures",
-      "Algorithms",
-      "JavaScript",
-      "React.js",
-      "Software Engineering Fundamentals",
-      "Problem Solving",
-      "Team Collaboration"
+      "Java",
+      "Cucumber (BDD)",
+      "Apache Fineract",
+      "Feign Clients",
+      "JQL Dashboards",
+      "CI/CD",
+      "Multi-Tenant Systems",
+      "BNPL Platform",
+      "TestNG",
+      "RestAssured",
+      "Claude"
     ],
     "order": 0,
-    "createdAt": "2026-01-13T04:45:41.268Z",
-    "updatedAt": "2026-01-13T04:45:47.417Z",
-    "__v": 0
+    "isCurrent": false
   },
   {
     "_id": "6965ce68c7e41a0c69f7d958",
-    "role": "React & Node.js Developer",
+    "role": "React Developer Intern",
     "company": "NS Apps Innovation",
-    "duration": "January 2026 – Present",
-    "description": "Working as a React and Node.js Developer on production-level web applications. Responsible for building and maintaining scalable frontend interfaces using React, and developing backend APIs using Node.js. Actively involved in integrating frontend with backend services, handling application state, implementing authentication flows, and improving overall performance and user experience. Collaborate with designers and developers to deliver features aligned with business requirements and timelines.",
+    "duration": "Jan 2026 – May 2026",
+    "location": "Patna, Bihar, India (Hybrid)",
+    "team": "Frontend Engineering",
+    "description": "React developer building ERP and government portals, admin dashboards and WhatsApp-based automation.",
+    "responsibilities": [
+      "Designed a contractor ERP platform for materials, costs, bills, and expenses, with a mobile-friendly view for on-site workers.",
+      "Automated delivery of bills and purchase orders to suppliers through WhatsApp API integration, replacing manual sharing.",
+      "Delivered responsive portals and admin dashboards for Bihar Government projects, including Bihar Films, using React.js.",
+      "Developed interactive puzzle games for Bihar Diwas and validated form workflows connected to REST APIs."
+    ],
     "skills": [
       "React.js",
       "JavaScript",
-      "Node.js",
-      "Express.js",
       "REST APIs",
-      "MongoDB",
       "State Management",
-      "API Integration",
+      "Form Validation",
+      "API Contracts",
       "Git",
-      "GitHub",
-      "Team Collaboration",
-      "Debugging",
-      "Performance Optimization"
+      "WhatsApp API",
+      "ERP",
+      "Admin Dashboards"
     ],
-    "order": 0,
-    "createdAt": "2026-01-13T04:47:36.528Z",
-    "updatedAt": "2026-01-13T04:47:36.528Z",
-    "__v": 0
+    "order": 1,
+    "isCurrent": false
   },
   {
     "_id": "69652aaf3cbd4e6a0b03c800",
     "role": "Software Development Engineer (SDE) Intern",
     "company": "ETS Network",
     "duration": "May 2025 – July 2025",
-    "description": "Worked as a Frontend-focused SDE Intern, developing and maintaining user-facing features for web applications. Built reusable React components, implemented responsive UI designs, and integrated frontend logic with existing APIs. Collaborated with the development team to translate design requirements into functional interfaces, fix UI bugs, and improve overall user experience. Followed best practices for clean code, component structure, and version control.",
+    "location": "Remote",
+    "team": "Frontend Engineering",
+    "description": "Developed and maintained user-facing features for web applications with reusable component architecture and API consumption.",
+    "responsibilities": [
+      "Built reusable React components and implemented responsive UI designs translating design requirements into functional interfaces.",
+      "Integrated frontend state with RESTful APIs, resolved UI rendering bugs, and improved overall accessibility.",
+      "Followed strict code quality guidelines, component modularization, and Git branching workflows."
+    ],
     "skills": [
-      "HTML",
-      "CSS",
-      "JavaScript",
       "React.js",
-      "Component-Based Architecture",
+      "JavaScript",
       "Responsive Design",
-      "Git",
-      "GitHub",
       "API Consumption",
       "UI Debugging",
-      "Team Collaboration",
-      "Agile Workflow",
-      "Communication"
+      "Component Modularization"
     ],
-    "order": 1,
-    "createdAt": "2026-01-12T17:09:03.487Z",
-    "updatedAt": "2026-01-13T04:45:47.417Z",
-    "__v": 0
+    "order": 2,
+    "isCurrent": false
   },
   {
     "_id": "696529e43cbd4e6a0b03c7f1",
     "role": "Freelance Web Developer",
-    "company": "Self-Employed / Freelance",
+    "company": "Self-Employed",
     "duration": "2023 – Present",
-    "description": "Worked independently with small businesses, startups, and individuals to design and develop responsive, high-performance websites. Delivered end-to-end solutions including UI development, WordPress customization, backend integration, performance optimization, and deployment. Collaborated directly with clients to understand requirements, propose solutions, and deliver projects on time with clear communication and revisions. Also handled website maintenance, bug fixes, and feature enhancements post-delivery.",
-    "skills": [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "React.js",
-      "WordPress",
-      "PHP",
-      "REST APIs",
-      "MongoDB",
-      "Node.js",
-      "Responsive Design",
-      "SEO Basics",
-      "Website Optimization",
-      "Client Communication",
-      "Deployment"
+    "location": "Remote",
+    "team": "Full-Stack Development",
+    "description": "Designed and delivered custom web platforms, e-commerce solutions, payment gateways, and client portals for startups and businesses.",
+    "responsibilities": [
+      "Architected end-to-end full-stack web applications with responsive design, payment gateways, and database modeling.",
+      "Delivered customized e-commerce solutions including Cryp2Sale serving international clients.",
+      "Managed client scoping, sprint delivery, deployment on Vercel/Render, and post-launch maintenance."
     ],
-    "order": 2,
-    "createdAt": "2026-01-12T17:05:40.436Z",
-    "updatedAt": "2026-01-13T04:45:47.417Z",
-    "__v": 0
+    "skills": [
+      "Full-Stack Web",
+      "Node.js",
+      "React",
+      "MongoDB",
+      "E-commerce",
+      "Payment Gateways",
+      "Client Management"
+    ],
+    "order": 3,
+    "isCurrent": true
   }
 ]

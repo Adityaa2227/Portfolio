@@ -1,168 +1,238 @@
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Github, Globe, ArrowLeft, ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import projectsRaw from '../../data/projects.json';
+import React, { Suspense, lazy, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Flip } from 'gsap/Flip';
+import { ExternalLink, Rocket, Search, X } from 'lucide-react';
+import Navbar from '../../components/Public/Navbar';
+import Footer from '../../components/Public/Footer';
+import LaptopMockup from '../../components/Common/LaptopMockup';
+import usePortfolioData from '../../hooks/usePortfolioData';
+import { gsap, useSiteMotion } from '../../lib/motion';
+import { startSmoothScroll } from '../../lib/smooth';
+import { FALLBACK_IMAGE, isRealLink, slugOf } from '../../lib/projects';
+import { ProjectIconTile } from '../../lib/projectMeta';
 
-const getYoutubeEmbedUrl = (url) => {
-    if (!url) return '';
-    try {
-        if (url.includes('youtube.com/watch')) {
-            const urlObj = new URL(url);
-            const v = urlObj.searchParams.get('v');
-            if (v) return `https://www.youtube.com/embed/${v}`;
-        }
-        if (url.includes('youtu.be/')) {
-            const id = url.split('youtu.be/')[1].split('?')[0];
-            return `https://www.youtube.com/embed/${id}`;
-        }
-        return url;
-    } catch {
-        return url;
-    }
+gsap.registerPlugin(Flip);
+
+const Starfield = lazy(() => import('../../components/Common/Starfield'));
+
+const ProjectCard = ({ project }) => {
+  const navigate = useNavigate();
+  const slug = slugOf(project);
+  const external = isRealLink(project.liveLink) ? project.liveLink : null;
+
+  return (
+    <article
+      onClick={(e) => { if (!e.target.closest('a')) navigate(`/projects/${slug}`); }}
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl glass transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-1 hover:border-accent/70 hover:shadow-[0_24px_60px_-24px_rgb(var(--c-accent)/0.8)]"
+    >
+      {/* Framed screenshot */}
+      <div className="relative px-6 pt-8 pb-4" style={{ background: 'radial-gradient(80% 90% at 50% 100%, rgb(var(--c-accent) / 0.28), transparent 70%)' }}>
+        {project.isFeatured && (
+          <span className="absolute left-3 top-3 z-10 rounded-md bg-accent px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_6px_20px_-6px_rgb(var(--c-accent))]">
+            Featured
+          </span>
+        )}
+        <a
+          href={external || `/projects/${slug}`}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          onClick={(e) => { if (!external) { e.preventDefault(); navigate(`/projects/${slug}`); } }}
+          aria-label={external ? `Open ${project.title} live site` : `Open ${project.title}`}
+          className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-accent/20 hover:text-foreground"
+        >
+          <ExternalLink size={16} aria-hidden />
+        </a>
+        <div className="mx-auto aspect-[16/10] w-[88%] overflow-hidden rounded-lg border border-border-strong bg-background shadow-[0_18px_40px_-18px_rgb(0_0_0/0.9)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03]">
+          <img
+            src={project.projectImage || FALLBACK_IMAGE}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover object-top"
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMAGE; }}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col px-5 pb-5">
+        <div className="flex items-center gap-3">
+          <ProjectIconTile project={project} slug={slug} />
+          <h2 className="font-heading text-lg font-bold text-foreground">
+            <Link to={`/projects/${slug}`} className="hover:text-accent-dark focus-visible:underline">{project.title}</Link>
+          </h2>
+        </div>
+        <p className="mt-2.5 line-clamp-2 text-sm leading-relaxed text-text-muted">{project.shortDescription || project.description}</p>
+        <ul className="mt-auto flex flex-wrap gap-1.5 pt-4">
+          {(project.technologies || []).slice(0, 3).map((t) => (
+            <li key={t} className="rounded-md border border-border bg-surface-muted/80 px-2.5 py-1 text-xs font-medium text-foreground">{t}</li>
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
 };
 
-// All published projects sorted by order
-const allProjects = projectsRaw
-    .filter(p => p.isPublished !== false)
-    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+export const AllProjects = () => {
+  const { projects } = usePortfolioData();
+  const [category, setCategory] = useState('All');
+  const [query, setQuery] = useState('');
+  const scope = useRef(null);
+  const grid = useRef(null);
+  const flipState = useRef(null);
 
-const allCategories = ['All', ...new Set(allProjects.map(p => p.category || 'Other'))];
+  const published = useMemo(
+    () => projects.filter((p) => p.isPublished !== false).sort((a, b) => Number(!!b.isFeatured) - Number(!!a.isFeatured) || (a.order ?? 99) - (b.order ?? 99)),
+    [projects]
+  );
 
-const AllProjects = () => {
-    const [activeCategory, setActiveCategory] = useState('All');
+  const categories = useMemo(() => {
+    const counts = published.reduce((m, p) => m.set(p.category || 'Other', (m.get(p.category || 'Other') || 0) + 1), new Map());
+    return [['All', published.length], ...counts.entries()];
+  }, [published]);
 
-    const filteredProjects = useMemo(() => {
-        if (activeCategory === 'All') return allProjects;
-        return allProjects.filter(p => (p.category || 'Other') === activeCategory);
-    }, [activeCategory]);
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    return published
+      .filter((p) => category === 'All' || (p.category || 'Other') === category)
+      .filter((p) => !q || [p.title, p.description, p.shortDescription, ...(p.technologies || [])].some((s) => s?.toLowerCase().includes(q)));
+  }, [published, category, query]);
 
-    return (
-        <div className="bg-background min-h-screen text-white relative overflow-hidden">
-            <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
+  const withFlip = (fn) => (...args) => {
+    if (grid.current) flipState.current = Flip.getState(grid.current.querySelectorAll('.flip-item'));
+    fn(...args);
+  };
 
-            {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 py-4 px-6 bg-black/70 backdrop-blur-xl z-50 border-b border-white/[0.06]">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link to="/" className="text-2xl font-heading font-bold tracking-tight cursor-pointer flex items-center gap-0.5 group">
-                        <span className="text-white group-hover:text-orange-400 transition-colors duration-300">Aditya</span>
-                        <span className="text-orange-500 group-hover:text-white transition-colors duration-300">.dev</span>
-                    </Link>
-                    <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-300 font-medium text-sm">
-                        <ArrowLeft size={18} /> Back to Home
-                    </Link>
-                </div>
-            </nav>
+  useLayoutEffect(() => {
+    const state = flipState.current;
+    flipState.current = null;
+    if (!state || !grid.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    Flip.from(state, {
+      targets: grid.current.querySelectorAll('.flip-item'),
+      duration: 0.6,
+      ease: 'power3.inOut',
+      absolute: true,
+      stagger: 0.02,
+      onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.85 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: 'back.out(1.6)' }),
+    });
+  }, [filtered]);
 
-            <div className="max-w-7xl mx-auto px-6 pt-32 pb-20 relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-12"
-                >
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 font-heading text-white">All <span className="gradient-text-orange">Projects</span></h1>
-                    <p className="text-gray-400 max-w-2xl text-base leading-relaxed">
-                        A complete collection of my works, including side projects, experiments, and open-source contributions.
-                    </p>
-                </motion.div>
+  // Page-load sequence: heading, laptop, filters, then cards
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', () => {
+        gsap
+          .timeline({ defaults: { ease: 'power4.out' } })
+          .from('.pp-in', { y: 40, autoAlpha: 0, duration: 0.9, stagger: 0.08 })
+          .from('.pp-laptop', { y: 60, rotate: 6, autoAlpha: 0, duration: 1.3, ease: 'expo.out' }, 0.1)
+          .from('.flip-item', { y: 50, autoAlpha: 0, duration: 0.8, stagger: 0.06 }, 0.45);
+        gsap.to('.pp-laptop', { y: -14, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.4 });
+      });
+    }, scope);
+    return () => ctx.revert();
+  }, []);
 
-                {/* Category Filter */}
-                <div className="flex flex-wrap gap-3 mb-12">
-                    {allCategories.map(cat => (
-                        <button
-                            key={cat}
-                            onClick={() => setActiveCategory(cat)}
-                            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                                activeCategory === cat
-                                ? 'bg-orange-500/10 text-orange-400 border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)]'
-                                : 'bg-white/[0.03] text-gray-400 border border-white/[0.06] hover:text-white hover:border-white/[0.1] hover:bg-white/[0.06]'
-                            }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
+  useEffect(() => { window.scrollTo(0, 0); return startSmoothScroll(); }, []);
+  useSiteMotion(scope, []);
 
-                <div key={activeCategory} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredProjects.map((project, idx) => (
-                        <motion.div
-                            key={project._id || idx}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: idx * 0.05 }}
-                            className="bg-surface border border-white/[0.06] rounded-2xl overflow-hidden hover:border-orange-500/30 hover:shadow-[0_0_30px_rgba(249,115,22,0.1)] transition-all duration-500 group flex flex-col h-full relative"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-t from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+  const clear = withFlip(() => { setCategory('All'); setQuery(''); });
 
-                            {(project.youtubeVideoUrl || project.projectImage) && (
-                                <div className="aspect-video overflow-hidden relative border-b border-white/[0.06] group/media">
-                                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur border border-white/[0.1] px-3 py-1.5 rounded-full text-xs text-orange-400 font-medium z-20 pointer-events-none">
-                                        {project.category || 'Project'}
-                                    </div>
-                                    {project.youtubeVideoUrl ? (
-                                        <iframe
-                                            src={getYoutubeEmbedUrl(project.youtubeVideoUrl)}
-                                            title={project.title}
-                                            className="w-full h-full border-none relative z-10"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowFullScreen
-                                        ></iframe>
-                                    ) : (
-                                        <img
-                                            src={project.projectImage}
-                                            alt={project.title}
-                                            className="w-full h-full object-contain object-center transform group-hover/media:scale-[1.03] transition-transform duration-700"
-                                        />
-                                    )}
-                                </div>
-                            )}
+  return (
+    <>
+      <Suspense fallback={null}><Starfield /></Suspense>
+      <div ref={scope} className="relative min-h-screen overflow-x-clip text-foreground">
+        <Navbar />
 
-                            <div className="p-6 md:p-8 flex flex-col h-full relative z-20">
-                                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-orange-400 transition-colors font-heading leading-tight">{project.title}</h3>
-                                <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-grow line-clamp-3">
-                                    {project.description}
-                                </p>
-
-                                <div className="flex flex-wrap gap-2 mb-8">
-                                    {project.technologies.slice(0, 5).map((tech, i) => (
-                                        <span key={i} className="px-3 py-1.5 bg-white/[0.03] border border-white/[0.06] rounded-lg text-xs font-medium text-gray-400 group-hover:border-orange-500/30 group-hover:text-orange-400 transition-colors duration-300">
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-
-                                <div className="flex items-center gap-6 mt-auto">
-                                    {project.liveLink && (
-                                        <a
-                                            href={project.liveLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group/link flex items-center gap-2 text-sm font-semibold text-white hover:text-orange-400 transition-colors duration-300"
-                                        >
-                                            <Globe size={16} />
-                                            <span>Live Demo</span>
-                                            <ArrowUpRight size={14} className="opacity-0 -translate-x-1 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all duration-300" />
-                                        </a>
-                                    )}
-                                    {project.githubLink && (
-                                        <a
-                                            href={project.githubLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-white transition-colors duration-300"
-                                        >
-                                            <Github size={16} />
-                                            <span>Source Code</span>
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+        <main className="page-wrap relative pt-32 pb-20 sm:pt-36">
+          {/* Header */}
+          <header className="relative grid items-center gap-10 lg:grid-cols-12">
+            <div aria-hidden className="pointer-events-none absolute -right-20 top-0 h-[420px] w-[620px] rounded-full bg-accent/20 blur-[130px]" />
+            <div className="relative lg:col-span-6">
+              <h1 className="pp-in font-heading text-5xl sm:text-7xl font-extrabold italic leading-[1.05] tracking-tight">
+                <span className="text-foreground">My </span>
+                <span className="text-gradient pr-2">Projects</span>
+              </h1>
+              <p className="pp-in mt-6 max-w-[48ch] text-base sm:text-lg leading-relaxed text-text-muted">
+                A collection of real-world projects I&rsquo;ve built, from full-stack applications to innovative tools,
+                solving practical problems.
+              </p>
             </div>
-        </div>
-    );
+            <div className="relative lg:col-span-6">
+              <LaptopMockup className="pp-laptop mx-auto w-full max-w-[460px]" />
+            </div>
+          </header>
+
+          {/* Filters */}
+          <div className="pp-in mt-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div role="group" aria-label="Filter by category" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:flex-wrap md:overflow-visible md:pb-0">
+              {categories.map(([cat, n]) => (
+                <button
+                  key={cat}
+                  type="button"
+                  aria-pressed={category === cat}
+                  onClick={withFlip(() => setCategory(cat))}
+                  className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-all ${
+                    category === cat
+                      ? 'border-accent bg-accent text-white shadow-[0_8px_24px_-8px_rgb(var(--c-accent))]'
+                      : 'border-border bg-surface/60 text-text-muted hover:border-accent/60 hover:text-foreground'
+                  }`}
+                >
+                  {cat} ({n})
+                </button>
+              ))}
+            </div>
+            <label className="relative block md:w-64 shrink-0">
+              <span className="sr-only">Search projects</span>
+              <input
+                type="search"
+                value={query}
+                onChange={withFlip((e) => setQuery(e.target.value))}
+                placeholder="Search projects..."
+                className="w-full rounded-full border border-border bg-surface/60 py-2.5 pl-4 pr-10 text-sm text-foreground placeholder:text-text-subtle"
+              />
+              <Search size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-subtle" aria-hidden />
+            </label>
+          </div>
+
+          {/* Grid */}
+          {filtered.length > 0 ? (
+            <ul ref={grid} className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((p) => (
+                <li key={p._id || p.title} className="flip-item" data-flip-id={p._id || p.title}>
+                  <ProjectCard project={p} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div ref={grid} className="mt-8 rounded-2xl glass p-10 text-center">
+              <p className="font-heading text-xl font-bold">No projects match &ldquo;{query}&rdquo;</p>
+              <p className="mt-2 text-text-muted">Try another word, or show every project.</p>
+              <button type="button" onClick={clear} className="btn-primary mt-6"><X size={15} aria-hidden /> Show all projects</button>
+            </div>
+          )}
+
+          {/* Coming soon */}
+          <section data-reveal="rise" className="relative mt-12 overflow-hidden rounded-2xl glass-strong">
+            <div aria-hidden className="absolute inset-0" style={{ background: 'radial-gradient(50% 120% at 85% 100%, rgb(var(--c-accent) / 0.45), transparent 70%)' }} />
+            <svg aria-hidden viewBox="0 0 600 120" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 h-16 w-full">
+              <path d="M0 90 L80 60 L150 85 L240 40 L330 80 L420 50 L510 85 L600 55 V120 H0Z" fill="rgb(var(--c-surface-muted))" opacity="0.8" />
+            </svg>
+            <div className="relative flex items-center gap-5 p-7 sm:p-9">
+              <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent-dark">
+                <Rocket size={30} className="drop-shadow-[0_0_12px_rgb(var(--c-accent))]" aria-hidden />
+              </span>
+              <div className="flex-1">
+                <h2 className="font-heading text-xl sm:text-2xl font-bold text-foreground">More Projects Coming Soon&hellip;</h2>
+                <p className="mt-1 text-sm sm:text-base text-text-muted">I&rsquo;m constantly building new things. Stay tuned!</p>
+              </div>
+              <a href="https://github.com/Adityaa2227" target="_blank" rel="noopener noreferrer" className="btn-outline hidden sm:inline-flex">
+                Follow on GitHub
+              </a>
+            </div>
+          </section>
+        </main>
+
+        <Footer />
+      </div>
+    </>
+  );
 };
 
 export default AllProjects;

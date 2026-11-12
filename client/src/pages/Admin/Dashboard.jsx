@@ -1,234 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { FolderGit2, FileText, MessageSquareQuote, Mail, ArrowRight, Plus, Code2 } from 'lucide-react';
 import api from '../../api/axios';
-import io from 'socket.io-client';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar, Legend
-} from 'recharts';
-import { 
-  Users, Activity, Globe, Smartphone, Clock, ArrowUpRight, Monitor 
-} from 'lucide-react';
+import { Card, PageHeader, Badge, fileUrl } from '../../components/Admin/ui';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const settle = (p) => p.then((r) => r.data).catch(() => null);
 
 const Dashboard = () => {
-  const { logout, admin } = useAuth();
-  const navigate = useNavigate();
-  const [stats, setStats] = useState(null);
-  const [liveUsers, setLiveUsers] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    // 1. Fetch Initial Data
-    const fetchStats = async () => {
-      try {
-        const { data } = await api.get('/analytics/stats');
-        setStats(data);
-        setLiveUsers(data?.overview?.liveUsers || 0);
-      } catch (error) {
-        console.error("Failed to load stats", error);
-        // Set fallback data so UI doesn't crash
-        setStats({
-            overview: { totalVisits: 0, uniqueVisitors: 0, bounceRate: 0 },
-            charts: { dailyVisits: [], devices: [], countries: [], topPages: [] }
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
-
-    // 2. Real-time Live Updates
-    const socket = io(SOCKET_URL);
-    
-    socket.on('connect_error', (err) => {
-        console.log("Socket connection failed (Backend might be restarting or offline)");
-    });
-
-    socket.on('analytics:liveUpdate', (data) => {
-      setLiveUsers(data.liveUsers);
-    });
-
-    return () => socket.disconnect();
+    Promise.all([
+      settle(api.get('/projects/admin')),
+      settle(api.get('/resume/all')),
+      settle(api.get('/testimonials/admin')),
+      settle(api.get('/contact')),
+    ]).then(([projects, resumes, reviews, messages]) => setData({ projects, resumes, reviews, messages }));
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
-  };
+  const projects = data?.projects || [];
+  const reviews = data?.reviews || [];
+  const messages = data?.messages || [];
+  const activeResume = (data?.resumes || []).find((r) => r.isActive);
+  const pending = reviews.filter((r) => !r.isApproved).length;
 
-  if (loading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading Analytics...</div>;
+  const tiles = [
+    { Icon: FolderGit2, label: 'Projects', value: projects.length, sub: `${projects.filter((p) => p.isPublished).length} published · ${projects.filter((p) => p.isFeatured).length} featured`, to: '/admin/projects' },
+    { Icon: MessageSquareQuote, label: 'Reviews waiting', value: pending, sub: `${reviews.length - pending} approved`, to: '/admin/reviews', highlight: pending > 0 },
+    { Icon: Mail, label: 'Messages', value: messages.length, sub: messages[0] ? `Latest from ${messages[0].name}` : 'No messages yet', to: '/admin/messages' },
+    { Icon: FileText, label: 'Resume', value: activeResume ? 'Uploaded' : 'Bundled', sub: activeResume ? new Date(activeResume.createdAt).toLocaleDateString() : 'Using /resume.pdf', to: '/admin/resume' },
+  ];
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-gray-100 p-8 font-sans">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
-        <div>
-           <h1 className="text-3xl font-bold text-white mb-2">Analytics Overview</h1>
-           <p className="text-gray-400 text-sm">Welcome back, {admin?.username}</p>
-        </div>
-        
-        <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full animate-pulse-slow">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-ping" />
-                <span className="text-green-400 font-mono font-bold">{liveUsers} Live Users</span>
+    <>
+      <PageHeader
+        title="Overview"
+        description="Projects, resume, reviews and messages are managed here. Everything else (experience, skills, bio, honors) is edited in code under client/src/data."
+        actions={<Link to="/admin/projects/new" className="btn-primary"><Plus size={16} aria-hidden /> New project</Link>}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {tiles.map(({ Icon, label, value, sub, to, highlight }) => (
+          <Link key={label} to={to} className={`group rounded-2xl glass p-5 transition-[border-color,box-shadow] hover:border-accent/70 hover:glow ${highlight ? 'border-accent/70' : ''}`}>
+            <div className="flex items-center justify-between">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent-dark"><Icon size={19} aria-hidden /></span>
+              <ArrowRight size={16} className="text-text-subtle transition-transform group-hover:translate-x-1 group-hover:text-foreground" aria-hidden />
             </div>
-            
-            <button 
-                onClick={handleLogout}
-                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold transition-colors"
-            >
-                Logout
-            </button>
+            <p className="mt-4 font-heading text-3xl font-bold text-foreground">{data ? value : '–'}</p>
+            <p className="text-sm font-medium text-foreground">{label}</p>
+            <p className="mt-1 truncate text-xs text-text-muted">{data ? sub : 'Loading…'}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <Card>
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-lg font-bold">Latest messages</h2>
+            <Link to="/admin/messages" className="text-sm text-accent-dark hover:underline">All messages</Link>
+          </div>
+          <ul className="mt-4 divide-y divide-border">
+            {messages.slice(0, 4).map((m) => (
+              <li key={m._id} className="py-3">
+                <p className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium text-foreground">{m.name}</span>
+                  <span className="shrink-0 text-xs text-text-subtle">{new Date(m.createdAt).toLocaleDateString()}</span>
+                </p>
+                <p className="mt-0.5 line-clamp-1 text-sm text-text-muted">{m.subject ? `${m.subject}: ` : ''}{m.message}</p>
+              </li>
+            ))}
+            {data && messages.length === 0 && <li className="py-3 text-sm text-text-muted">No messages yet.</li>}
+          </ul>
+        </Card>
+
+        <Card>
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-lg font-bold">Reviews waiting for approval</h2>
+            <Link to="/admin/reviews" className="text-sm text-accent-dark hover:underline">Review them</Link>
+          </div>
+          <ul className="mt-4 divide-y divide-border">
+            {reviews.filter((r) => !r.isApproved).slice(0, 4).map((r) => (
+              <li key={r._id} className="py-3">
+                <p className="flex items-center gap-2 text-sm"><span className="font-medium text-foreground">{r.name}</span><Badge tone="warning">Pending</Badge></p>
+                <p className="mt-0.5 line-clamp-1 text-sm text-text-muted">{r.message}</p>
+              </li>
+            ))}
+            {data && pending === 0 && <li className="py-3 text-sm text-text-muted">Nothing waiting. New reviews show up here.</li>}
+          </ul>
+        </Card>
+      </div>
+
+      <Card className="mt-6 flex items-start gap-4">
+        <Code2 size={22} className="mt-0.5 shrink-0 text-accent-dark" aria-hidden />
+        <div className="text-sm text-text-muted">
+          <p className="font-medium text-foreground">Edited in code</p>
+          <p className="mt-1">
+            Experience: <code className="text-foreground">src/data/experience.json</code> · Skills: <code className="text-foreground">src/components/Public/Skills.jsx</code> ·
+            Honors &amp; profiles: <code className="text-foreground">src/data/codingProfiles.json</code> · Bio: <code className="text-foreground">src/data/bio.json</code>
+          </p>
+          {activeResume && (
+            <p className="mt-2">Active resume: <a href={fileUrl(activeResume.fileUrl)} target="_blank" rel="noopener noreferrer" className="text-accent-dark hover:underline">{activeResume.fileName}</a></p>
+          )}
         </div>
-      </div>
-      
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard 
-            title="Total Visits" 
-            value={stats?.overview?.totalVisits} 
-            icon={<Users size={20} className="text-blue-400" />}
-            color="bg-blue-500/10 border-blue-500/20"
-        />
-        <StatCard 
-            title="Unique Visitors" 
-            value={stats?.overview?.uniqueVisitors} 
-            icon={<Activity size={20} className="text-purple-400" />}
-            color="bg-purple-500/10 border-purple-500/20"
-        />
-        <StatCard 
-            title="Bounce Rate" 
-            value={`${stats?.overview?.bounceRate}%`} 
-            icon={<ArrowUpRight size={20} className="text-orange-400" />}
-            color="bg-orange-500/10 border-orange-500/20"
-        />
-        <StatCard 
-            title="Avg. Session" 
-            value="--:--" 
-            icon={<Clock size={20} className="text-green-400" />}
-            color="bg-green-500/10 border-green-500/20"
-        />
-      </div>
-
-      {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2 bg-[#1E293B]/50 border border-gray-800 p-6 rounded-2xl">
-              <h3 className="text-lg font-semibold text-white mb-6">Traffic Trend (7 Days)</h3>
-              <div className="h-64 w-full">
-                {stats?.charts?.dailyVisits?.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={stats.charts.dailyVisits}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                            <XAxis dataKey="_id" stroke="#9CA3AF" />
-                            <YAxis stroke="#9CA3AF" />
-                            <Tooltip 
-                                contentStyle={{ backgroundColor: '#111827', border: '1px solid #374151' }}
-                                itemStyle={{ color: '#E5E7EB' }}
-                            />
-                            <Line type="monotone" dataKey="count" stroke="#3B82F6" strokeWidth={3} dot={{ fill: '#3B82F6' }} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500 text-sm">No traffic data captured yet</div>
-                )}
-              </div>
-          </div>
-
-          <div className="bg-[#1E293B]/50 border border-gray-800 p-6 rounded-2xl">
-              <h3 className="text-lg font-semibold text-white mb-6">Devices</h3>
-              <div className="h-64 w-full">
-                {stats?.charts?.devices?.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                            <Pie
-                                data={stats.charts.devices}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
-                                paddingAngle={5}
-                                dataKey="count"
-                            >
-                                {stats.charts.devices.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip contentStyle={{ backgroundColor: '#111827', border: 'none' }} />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500 text-sm">No device data</div>
-                )}
-              </div>
-          </div>
-      </div>
-
-      {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-           <div className="bg-[#1E293B]/50 border border-gray-800 p-6 rounded-2xl">
-              <h3 className="text-lg font-semibold text-white mb-6">Top Pages</h3>
-              <div className="h-64 w-full">
-                {stats?.charts?.topPages?.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={stats.charts.topPages} layout="vertical">
-                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" horizontal={false} />
-                            <XAxis type="number" stroke="#9CA3AF" />
-                            <YAxis dataKey="_id" type="category" width={150} stroke="#9CA3AF" fontSize={12} />
-                            <Tooltip cursor={{fill: '#374151'}} contentStyle={{ backgroundColor: '#111827', border: 'none' }} />
-                            <Bar dataKey="count" fill="#10B981" radius={[0, 4, 4, 0]} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500 text-sm">No page view data</div>
-                )}
-              </div>
-          </div>
-
-          <div className="bg-[#1E293B]/50 border border-gray-800 p-6 rounded-2xl">
-              <h3 className="text-lg font-semibold text-white mb-6">Locations</h3>
-              <div className="space-y-4">
-                  {stats?.charts?.countries.map((country, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                              <Globe size={16} className="text-gray-400" />
-                              <span className="text-sm text-gray-200">{country._id}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                              <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-blue-500" 
-                                    style={{ width: `${(country.count / stats.overview.totalVisits) * 100}%` }} 
-                                  />
-                              </div>
-                              <span className="text-xs text-gray-400 font-mono">{country.count}</span>
-                          </div>
-                      </div>
-                  ))}
-                  {stats?.charts?.countries.length === 0 && (
-                      <p className="text-gray-500 text-sm">No location data yet.</p>
-                  )}
-              </div>
-          </div>
-      </div>
-    </div>
+      </Card>
+    </>
   );
 };
-
-const StatCard = ({ title, value, icon, color }) => (
-    <div className={`p-6 rounded-xl border bg-[#1E293B]/50 border-gray-800 flex items-start justify-between`}>
-        <div>
-            <p className="text-gray-400 text-sm mb-1">{title}</p>
-            <h4 className="text-2xl font-bold text-white">{value || 0}</h4>
-        </div>
-        <div className={`p-3 rounded-lg ${color}`}>
-            {icon}
-        </div>
-    </div>
-);
 
 export default Dashboard;

@@ -1,144 +1,121 @@
-'use client'
-
-import React, { useRef, useEffect } from 'react'
+import React from 'react';
 import {
-  SiOpenjdk, SiCplusplus, SiC, SiHtml5, SiCss3, SiJavascript, SiPython,
-  SiReact, SiGit, SiGithub, SiRedux, SiBootstrap, SiTailwindcss, SiFigma,
-  SiWordpress, SiPostman, SiElementor, SiHoppscotch, SiNodedotjs, SiExpress,
-  SiMongodb, SiMysql, SiFirebase, SiSocketdotio, SiWebrtc, SiMongoose,
-  SiNextdotjs, SiVercel, SiNetlify, SiHeroku,
-} from 'react-icons/si'
-import { FaJava } from "react-icons/fa";
-import { VscCode } from 'react-icons/vsc'
-import {
-  HiOutlineLightBulb, HiOutlineCode, HiOutlineDesktopComputer,
-  HiDatabase, HiServer, HiOutlineKey, HiOutlineShieldCheck,
-} from 'react-icons/hi'
+  SiCplusplus, SiC, SiJavascript, SiReact, SiNextdotjs, SiNodedotjs, SiExpress, SiMongodb, SiMysql, SiRedis,
+  SiSocketdotio, SiFirebase, SiTailwindcss, SiDocker, SiKubernetes, SiTerraform, SiGit, SiGithubactions,
+  SiJunit5, SiCucumber, SiClaude, SiGooglegemini, SiPython, SiTypescript, SiSpringboot, SiPostgresql,
+} from 'react-icons/si';
+import { FaJava, FaAws } from 'react-icons/fa';
+import { Code2, Server, MonitorSmartphone, Container, Bot, Sparkles, DatabaseZap, Boxes, Plug, MessageSquareCode } from 'lucide-react';
+import Section, { SectionHeading } from './Section';
 
-import skillsRaw from '../../data/skills.json'
-import gsap from 'gsap';
-import useScrollAnimations from '../../hooks/useScrollAnimations';
+// Grouped the same way as the resume's Skills section.
+const GROUPS = [
+  {
+    title: 'Languages',
+    Icon: Code2,
+    items: [
+      { name: 'Java', Icon: FaJava, color: '#F89820' },
+      { name: 'C++', Icon: SiCplusplus, color: '#659AD2' },
+      { name: 'C', Icon: SiC, color: '#A8B9CC' },
+      { name: 'Python', Icon: SiPython, color: '#FFD43B' },
+      { name: 'JavaScript', Icon: SiJavascript, color: '#F7DF1E' },
+      { name: 'TypeScript', Icon: SiTypescript, color: '#3178C6' },
+    ],
+  },
+  {
+    title: 'Backend & Databases',
+    Icon: Server,
+    items: [
+      { name: 'Node.js', Icon: SiNodedotjs, color: '#5FA04E' },
+      { name: 'Express', Icon: SiExpress, color: 'currentColor' },
+      { name: 'Spring Boot', Icon: SiSpringboot, color: '#6DB33F' },
+      { name: 'MySQL', Icon: SiMysql, color: '#4479A1' },
+      { name: 'PostgreSQL', Icon: SiPostgresql, color: '#4169E1' },
+      { name: 'MongoDB', Icon: SiMongodb, color: '#47A248' },
+      { name: 'Redis', Icon: SiRedis, color: '#FF4438' },
+    ],
+  },
+  {
+    title: 'Frontend & Real-time',
+    Icon: MonitorSmartphone,
+    items: [
+      { name: 'React', Icon: SiReact, color: '#61DAFB' },
+      { name: 'Next.js', Icon: SiNextdotjs, color: 'currentColor' },
+      { name: 'Tailwind', Icon: SiTailwindcss, color: '#38BDF8' },
+      { name: 'Socket.io', Icon: SiSocketdotio, color: 'currentColor' },
+      { name: 'Firebase', Icon: SiFirebase, color: '#FFCA28' },
+    ],
+  },
+  {
+    title: 'DevOps & Testing',
+    Icon: Container,
+    items: [
+      { name: 'AWS', Icon: FaAws, color: '#FF9900' },
+      { name: 'Docker', Icon: SiDocker, color: '#2496ED' },
+      { name: 'Kubernetes', Icon: SiKubernetes, color: '#326CE5' },
+      { name: 'Terraform', Icon: SiTerraform, color: '#844FBA' },
+      { name: 'Git', Icon: SiGit, color: '#F05032' },
+      { name: 'CI/CD', Icon: SiGithubactions, color: '#2088FF' },
+      { name: 'JUnit', Icon: SiJunit5, color: '#25A162' },
+      { name: 'Cucumber', Icon: SiCucumber, color: '#23D96C' },
+    ],
+  },
+  {
+    title: 'AI & Automation',
+    Icon: Bot,
+    items: [
+      { name: 'Claude', Icon: SiClaude, color: '#D97757' },
+      { name: 'Gemini', Icon: SiGooglegemini, color: '#8E75B2' },
+      { name: 'Groq', Icon: Sparkles, color: '#F55036' },
+      { name: 'RAG', Icon: DatabaseZap, color: '#A78BFA' },
+      { name: 'Prompt Eng.', Icon: MessageSquareCode, color: '#C084FC' },
+      { name: 'Vector DBs', Icon: Boxes, color: '#60A5FA' },
+      { name: 'MCP', Icon: Plug, color: '#34D399' },
+    ],
+  },
+];
 
-const skillIcons = {
-  'C++': SiCplusplus, 'C': SiC, 'HTML': SiHtml5, 'CSS': SiCss3,
-  'JavaScript': SiJavascript, 'Python': SiPython, 'React': SiReact,
-  'VS Code': VscCode, 'Git': SiGit, 'GitHub': SiGithub,
-  'Bootstrap': SiBootstrap, 'Tailwind CSS': SiTailwindcss, 'Figma': SiFigma,
-  'WordPress': SiWordpress, 'Redux': SiRedux, 'Postman': SiPostman,
-  'Hoppscotch': SiHoppscotch, 'Elementor': SiElementor, 'Node.js': SiNodedotjs,
-  'Express.js': SiExpress, 'MongoDB': SiMongodb, 'MySQL': SiMysql,
-  'Java': FaJava, 'JWT': HiOutlineShieldCheck, 'OAuth': HiOutlineKey,
-  'Firebase': SiFirebase, 'Mongoose': SiMongoose, 'Socket.io': SiSocketdotio,
-  'WebRTC': SiWebrtc, 'Next.js': SiNextdotjs, 'Vercel': SiVercel,
-  'Netlify': SiNetlify, 'Heroku': SiHeroku,
-}
+const Tile = ({ name, Icon, color }) => (
+  <li className="tilt">
+    <div className="tilt-inner group flex h-[5.5rem] flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background/40 px-1 text-foreground transition-[border-color,box-shadow] duration-300 hover:border-accent hover:glow">
+      <Icon
+        size={28}
+        style={{ color }}
+        className="transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgb(var(--c-accent)/0.35)]"
+        aria-hidden
+      />
+      <span className="text-center text-[11px] font-medium leading-tight text-text-muted group-hover:text-foreground">{name}</span>
+    </div>
+  </li>
+);
 
-const skillColors = {
-  'C++': 'text-[#00599C]', 'C': 'text-[#A8B9CC]', 'HTML': 'text-[#E34F26]',
-  'CSS': 'text-[#1572B6]', 'JavaScript': 'text-[#F7DF1E]', 'Python': 'text-[#3776AB]',
-  'React': 'text-[#61DAFB]', 'VS Code': 'text-[#007ACC]', 'Git': 'text-[#F05032]',
-  'GitHub': 'text-white', 'Bootstrap': 'text-[#7952B3]', 'Tailwind CSS': 'text-[#06B6D4]',
-  'Figma': 'text-[#F24E1E]', 'WordPress': 'text-[#21759B]', 'Redux': 'text-[#764ABC]',
-  'Postman': 'text-[#FF6C37]', 'Hoppscotch': 'text-[#FF6C37]', 'Elementor': 'text-[#FF6C37]',
-  'Node.js': 'text-[#339933]', 'Express.js': 'text-white', 'MongoDB': 'text-[#47A248]',
-  'MySQL': 'text-[#4479A1]', 'Java': 'text-[#007396]', 'JWT': 'text-yellow-600',
-  'OAuth': 'text-blue-600', 'Firebase': 'text-[#FFCA28]', 'Mongoose': 'text-red-600',
-  'Socket.io': 'text-white', 'WebRTC': 'text-[#F37C20]', 'Next.js': 'text-white',
-  'Vercel': 'text-white', 'Netlify': 'text-[#00C7B7]', 'Heroku': 'text-[#430098]',
-}
+export const Skills = () => (
+  <Section id="skills">
+    <SectionHeading center eyebrow="Tech stack" title="Tools & Technologies I Work With" />
 
-const categoryIcons = {
-  'Languages': HiOutlineLightBulb,
-  'Frontend': HiOutlineCode,
-  'Backend': HiServer,
-  'Database': HiDatabase,
-  'Tools & Platforms': HiOutlineDesktopComputer,
-};
-
-// Group the flat skills array from JSON into categories
-const order = ['Languages', 'Frontend', 'Backend', 'Database', 'Tools & Platforms'];
-const skills = skillsRaw
-  .reduce((acc, skill) => {
-    const found = acc.find(g => g.category === skill.category);
-    if (found) {
-      found.items.push(skill.name);
-    } else {
-      acc.push({ category: skill.category, items: [skill.name] });
-    }
-    return acc;
-  }, [])
-  .sort((a, b) => {
-    const ia = order.indexOf(a.category);
-    const ib = order.indexOf(b.category);
-    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
-  });
-
-export default function Skills() {
-  const sectionRef = useRef(null);
-  const headerRef = useRef(null);
-  const { revealText, revealStagger } = useScrollAnimations();
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      revealText(headerRef.current);
-      const categories = sectionRef.current.querySelectorAll('.skill-category-wrapper');
-      categories.forEach(cat => {
-        const title = cat.querySelector('h3');
-        const items = cat.querySelectorAll('.skill-card');
-        revealText(title);
-        revealStagger(items, cat);
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section id="skills" className="py-20 bg-background text-white relative overflow-hidden" ref={sectionRef}>
-      {/* Background glow */}
-      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-orange-500/[0.03] rounded-full blur-[150px]" />
-
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-10">
-        <div
-          ref={headerRef}
-          className="mb-14 text-center opacity-0"
+    <div className="mx-auto mt-14 grid max-w-6xl gap-5 md:grid-cols-2 lg:grid-cols-6">
+      {GROUPS.map(({ title, Icon, items }, i) => (
+        <section
+          key={title}
+          data-reveal="rise"
+          aria-labelledby={`skills-${i}`}
+          // 3 cards on the first row, 2 wider ones on the second
+          className={`glass rounded-2xl p-5 transition-colors hover:border-accent/60 ${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'} ${i === 4 ? 'md:col-span-2 lg:col-span-3' : ''}`}
         >
-          <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl font-heading text-white">
-            Skills & <span className="gradient-text-orange">Expertise</span>
-          </h2>
-          <div className="section-divider" />
-        </div>
+          <header className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent-dark">
+              <Icon size={19} aria-hidden />
+            </span>
+            <h3 id={`skills-${i}`} className="flex-1 font-heading text-lg font-bold text-foreground">{title}</h3>
+            <span className="rounded-md border border-border px-2 py-0.5 text-xs text-text-subtle">{items.length}</span>
+          </header>
+          <ul data-reveal="pop" className="mt-4 grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+            {items.map((s) => <Tile key={s.name} {...s} />)}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </Section>
+);
 
-        <div className="space-y-12">
-          {skills.map((skillCategory) => (
-            <div key={skillCategory.category} className="skill-category-wrapper">
-              <div className="flex items-center justify-center gap-3 mb-6 opacity-0">
-                {categoryIcons[skillCategory.category] && React.createElement(categoryIcons[skillCategory.category], {
-                  className: `w-5 h-5 text-orange-400`
-                })}
-                <h3 className="text-xl font-semibold text-center font-heading text-gray-200">
-                  {skillCategory.category}
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
-                {skillCategory.items.map((skill) => (
-                  <div
-                    key={skill}
-                    className="skill-card glass-card relative flex flex-col items-center p-5 md:p-6 rounded-xl group cursor-default opacity-0"
-                  >
-                    <div className="absolute inset-0 bg-orange-500/[0.03] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    {skillIcons[skill] ? React.createElement(skillIcons[skill], {
-                      className: `w-10 h-10 md:w-12 md:h-12 ${skillColors[skill] || 'text-white'} mb-3 relative z-10 transition-transform duration-300 group-hover:scale-110`
-                    }) : (
-                      <HiOutlineLightBulb className="relative z-10 w-10 h-10 md:w-12 md:h-12 mb-3 text-white" />
-                    )}
-                    <span className="relative z-10 font-medium text-center text-gray-300 text-sm">{skill}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
+export default Skills;

@@ -10,6 +10,7 @@ import { gsap, useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
 import { FALLBACK_IMAGE, isRealLink, slugOf } from '../../lib/projects';
 import { ProjectIconTile } from '../../lib/projectMeta';
+import { usePageMeta } from '../../lib/pageMeta';
 
 gsap.registerPlugin(Flip);
 
@@ -72,6 +73,7 @@ const ProjectCard = ({ project }) => {
 
 export const AllProjects = () => {
   const { projects } = usePortfolioData();
+  usePageMeta({ title: 'Projects', description: 'Projects by Aditya Agarwal: full-stack apps, backend systems, GenAI tools and more, with case studies, tech stacks and links.', path: '/projects' });
   const [category, setCategory] = useState('All');
   const [query, setQuery] = useState('');
   const scope = useRef(null);

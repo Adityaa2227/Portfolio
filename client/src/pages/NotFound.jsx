@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Navbar from '../components/Public/Navbar';
 import { gsap } from '../lib/motion';
+import { usePageMeta } from '../lib/pageMeta';
 
 const Starfield = lazy(() => import('../components/Common/Starfield'));
 
@@ -36,6 +37,7 @@ const Astronaut = () => (
 );
 
 const NotFound = () => {
+  usePageMeta({ title: 'Page not found', path: window.location.pathname });
   const root = useRef(null);
 
   useLayoutEffect(() => {

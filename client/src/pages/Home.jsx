@@ -13,12 +13,14 @@ import usePortfolioData from '../hooks/usePortfolioData';
 import { useSiteMotion, ScrollTrigger } from '../lib/motion';
 import { startSmoothScroll, scrollToId } from '../lib/smooth';
 import { useIntroDone } from '../lib/intro';
+import { usePageMeta } from '../lib/pageMeta';
 
 // Three.js is heavy, so the star field loads after the page shell.
 const Starfield = lazy(() => import('../components/Common/Starfield'));
 
 export const Home = () => {
   const { projects, experience, resume } = usePortfolioData();
+  usePageMeta({ path: '/' });
   const ready = useIntroDone();
   const scope = useRef(null);
   const { hash } = useLocation();

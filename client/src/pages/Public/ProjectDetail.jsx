@@ -12,6 +12,7 @@ import { gsap, useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
 import { FALLBACK_IMAGE, isRealLink, metricsOf, slugOf } from '../../lib/projects';
 import { ProjectIconTile, techIcon } from '../../lib/projectMeta';
+import { usePageMeta } from '../../lib/pageMeta';
 
 const Starfield = lazy(() => import('../../components/Common/Starfield'));
 
@@ -96,6 +97,13 @@ export const ProjectDetail = () => {
 
   const published = useMemo(() => projects.filter((p) => p.isPublished !== false), [projects]);
   const project = published.find((p) => slugOf(p) === slug || p._id === slug);
+
+  usePageMeta({
+    title: project ? project.title : 'Project not found',
+    description: project ? (project.shortDescription || project.description) : undefined,
+    path: `/projects/${slug}`,
+    image: project?.projectImage,
+  });
 
   const related = useMemo(() => {
     if (!project) return [];

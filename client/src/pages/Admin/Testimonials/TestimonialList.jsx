@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { Check, EyeOff, MessageSquareQuote, Star, Trash2 } from 'lucide-react';
 import api from '../../../api/axios';
 import { apiError, Badge, Empty, ErrorNote, PageHeader, Spinner } from '../../../components/Admin/ui';
+import AiPolish from './AiPolish';
 
 const TABS = [
   { key: 'pending', label: 'Waiting', test: (t) => !t.isApproved },
@@ -99,6 +100,7 @@ const TestimonialList = () => {
                 <button type="button" onClick={() => remove(t)} className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs text-red-300 hover:bg-red-500/10">
                   <Trash2 size={14} aria-hidden /> Delete
                 </button>
+                <AiPolish review={t} onSaved={(updated) => setReviews((list) => list.map((x) => (x._id === updated._id ? { ...x, message: updated.message } : x)))} />
               </div>
             </li>
           ))}

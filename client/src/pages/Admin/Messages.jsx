@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Loader2, Mail, Phone, Reply, Search, Trash2 } from 'lucide-react';
 import api from '../../api/axios';
 import { apiError, Badge, Empty, ErrorNote, inputCls, PageHeader, Spinner } from '../../components/Admin/ui';
+import AiReply from './AiReply';
 
 const checkboxCls = 'h-4 w-4 shrink-0 cursor-pointer rounded accent-[rgb(var(--c-accent))]';
 
@@ -131,12 +132,15 @@ const Messages = () => {
                       {m.phone && <a href={`tel:${m.phone.replace(/\s+/g, '')}`} className="inline-flex items-center gap-1.5 hover:text-accent-dark"><Phone size={14} aria-hidden /> {m.phone}</a>}
                     </p>
                     <p className="mt-3 whitespace-pre-wrap break-words rounded-xl bg-background/50 p-4 text-sm leading-relaxed text-foreground">{m.message}</p>
-                    <a
-                      href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject || 'your message'}`)}`}
-                      className="btn-outline mt-4 !px-3 !py-1.5 text-xs"
-                    >
-                      <Reply size={14} aria-hidden /> Reply by email
-                    </a>
+                    <div className="mt-4 flex flex-wrap items-start gap-2">
+                      <a
+                        href={`mailto:${m.email}?subject=${encodeURIComponent(`Re: ${m.subject || 'your message'}`)}`}
+                        className="btn-outline !px-3 !py-1.5 text-xs"
+                      >
+                        <Reply size={14} aria-hidden /> Reply by email
+                      </a>
+                      <AiReply message={m} />
+                    </div>
                   </div>
                 </li>
               );

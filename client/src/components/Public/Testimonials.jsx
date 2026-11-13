@@ -15,7 +15,13 @@ export const Testimonials = () => {
 
   // /?review=<token>: open the form pre-filled for that person (if the link is still valid).
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get('review');
+    const params = new URLSearchParams(window.location.search);
+    // Public "leave a review" link (/review): just open the form.
+    if (params.get('write-review') === '1') {
+      setFormOpen(true);
+      return;
+    }
+    const token = params.get('review');
     if (!token || !/^[a-f0-9]{32}$/.test(token)) return;
     api.get(`/review-invites/${token}`, { timeout: 20000 })
       .then(({ data: inv }) => {

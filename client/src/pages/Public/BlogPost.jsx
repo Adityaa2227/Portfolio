@@ -6,7 +6,7 @@ import Footer from '../../components/Public/Footer';
 import { getWithRetry } from '../../api/axios';
 import { useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
-import { usePageMeta } from '../../lib/pageMeta';
+import { usePageMeta, SITE_URL } from '../../lib/pageMeta';
 import { renderMarkdown } from '../../lib/markdown';
 import { track } from '../../lib/analytics';
 import { formatDate } from './Blog';
@@ -39,6 +39,25 @@ const BlogPost = () => {
     description: post?.excerpt,
     path: `/blog/${slug}`,
     image: post?.coverImage,
+    schema: post
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.title,
+          description: post.excerpt,
+          url: `${SITE_URL}/blog/${encodeURIComponent(slug)}`,
+          datePublished: post.publishedAt || undefined,
+          author: { '@type': 'Person', name: 'Aditya Agarwal' },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Aditya Agarwal',
+            url: SITE_URL,
+            logo: { '@type': 'ImageObject', url: `${SITE_URL}/og-image.jpg` },
+          },
+          image: post.coverImage || `${SITE_URL}/og-image.jpg`,
+          mainEntityOfPage: `${SITE_URL}/blog/${encodeURIComponent(slug)}`,
+        }
+      : undefined,
   });
 
   const html = useMemo(() => (post ? renderMarkdown(post.content) : ''), [post]);

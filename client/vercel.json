@@ -5,6 +5,20 @@
       "destination": "https://aditya-universal-backend.onrender.com/api/v1/portfolio/sitemap.xml"
     },
     {
+      "source": "/review",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/projects/:slug",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(LinkedInBot|facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|redditbot|Pinterestbot|SkypeUriPreview|Embedly|vkShare|Iframely|bitlybot|MicrosoftPreview).*" }],
+      "destination": "https://aditya-universal-backend.onrender.com/api/v1/portfolio/share/projects/:slug"
+    },
+    {
+      "source": "/blog/:slug",
+      "has": [{ "type": "header", "key": "user-agent", "value": ".*(LinkedInBot|facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|redditbot|Pinterestbot|SkypeUriPreview|Embedly|vkShare|Iframely|bitlybot|MicrosoftPreview).*" }],
+      "destination": "https://aditya-universal-backend.onrender.com/api/v1/portfolio/share/blog/:slug"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

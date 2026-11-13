@@ -68,6 +68,8 @@ function App() {
         <Route path="/projects/:slug" element={<ProjectDetail />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
+        {/* Shareable "leave a review" link: opens the review form on the homepage */}
+        <Route path="/review" element={<Navigate to="/?write-review=1#reviews" replace />} />
 
         {/* Admin */}
         <Route path="/admin/login" element={<Login />} />

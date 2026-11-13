@@ -31,7 +31,7 @@ const setCanonical = (href) => {
  * Google reads these after the page renders. LinkedIn/WhatsApp read only the static
  * tags in index.html, so shared links always get the site-wide card.
  */
-export const usePageMeta = ({ title, description, path = '/', image } = {}) => {
+export const usePageMeta = ({ title, description, path = '/', image, schema } = {}) => {
   useEffect(() => {
     const fullTitle = title ? `${title} | Aditya Agarwal` : DEFAULT_TITLE;
     const desc = (description || DEFAULT_DESCRIPTION).replace(/\s+/g, ' ').trim().slice(0, 300);
@@ -48,5 +48,17 @@ export const usePageMeta = ({ title, description, path = '/', image } = {}) => {
     setMeta('name', 'twitter:title', fullTitle);
     setMeta('name', 'twitter:description', desc);
     setMeta('name', 'twitter:image', img);
-  }, [title, description, path, image]);
+
+    // Structured data (JSON-LD) helps Google show rich results.
+    if (schema) {
+      let el = document.head.querySelector('script[data-page-schema="1"]');
+      if (!el) {
+        el = document.createElement('script');
+        el.type = 'application/ld+json';
+        el.setAttribute('data-page-schema', '1');
+        document.head.appendChild(el);
+      }
+      el.textContent = JSON.stringify(schema);
+    }
+  }, [title, description, path, image, schema]);
 };

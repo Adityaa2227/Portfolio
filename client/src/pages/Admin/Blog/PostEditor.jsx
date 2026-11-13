@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Eye, ImagePlus, Loader2, Pencil, Save, Sparkles, Undo2, Wand2, X } from 'lucide-react';
+import { ArrowLeft, Eye, ImagePlus, Loader2, Pencil, Save, Undo2, X } from 'lucide-react';
 import api from '../../../api/axios';
 import { apiError, Card, ErrorNote, Field, inputCls, PageHeader, Spinner, Toggle } from '../../../components/Admin/ui';
 import { renderMarkdown } from '../../../lib/markdown';
@@ -24,29 +24,6 @@ const PostEditor = () => {
   const [before, setBefore] = useState(null);
 
   const [uploading, setUploading] = useState(false);
-
-  // AI cover image
-  const [coverStyle, setCoverStyle] = useState('');
-  const [coverBusy, setCoverBusy] = useState(false);
-  const [coverInfo, setCoverInfo] = useState('');
-  const generateCover = async () => {
-    setCoverBusy(true);
-    setError('');
-    setCoverInfo('');
-    try {
-      const { data } = await api.post(
-        '/posts/ai-cover',
-        { title: form.title, excerpt: form.excerpt, content: form.content.slice(0, 4000), style: coverStyle },
-        { timeout: 120000 }
-      );
-      setForm((f) => ({ ...f, coverImage: data.url }));
-      setCoverInfo(`Made with ${data.provider}. Not saved until you press Save.`);
-    } catch (err) {
-      setError(apiError(err, 'The AI couldn’t make a cover image. Try again.'));
-    } finally {
-      setCoverBusy(false);
-    }
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -212,19 +189,9 @@ const PostEditor = () => {
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => uploadCover(e.target.files?.[0])} />
               </label>
             )}
-            <div className="rounded-xl border border-accent/30 bg-accent/[0.06] p-3">
-              <p className="flex items-center gap-1.5 text-sm font-medium text-foreground"><Sparkles size={14} className="text-accent-dark" aria-hidden /> Generate with AI</p>
-              <p className="mt-0.5 text-xs text-text-muted">Uses the title and summary (or the start of the post) to make a cover in the site’s purple style.</p>
-              <label className="mt-2 block">
-                <span className="sr-only">Extra style direction (optional)</span>
-                <input value={coverStyle} onChange={(e) => setCoverStyle(e.target.value)} maxLength={200} placeholder="Optional: e.g. a glowing server rack, minimal" className={`${inputCls} !py-2 text-xs`} />
-              </label>
-              <button type="button" onClick={generateCover} disabled={coverBusy || form.title.trim().length < 3} className="btn-outline mt-2 w-full !py-2 text-sm disabled:opacity-60">
-                {coverBusy ? <Loader2 size={15} className="animate-spin" aria-hidden /> : <Wand2 size={15} aria-hidden />}
-                {coverBusy ? 'Generating… (up to a minute)' : form.coverImage ? 'Generate a new cover' : 'Generate cover'}
-              </button>
-              {form.title.trim().length < 3 && <p className="mt-1 text-[11px] text-text-subtle">Add a title first.</p>}
-              {coverInfo && <p role="status" className="mt-1 text-[11px] text-emerald-300">{coverInfo}</p>}
+            <div className="rounded-xl border border-dashed border-border-strong p-3">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-foreground"><ImagePlus size={14} className="text-accent-dark" aria-hidden /> Upload a cover image</p>
+              <p className="mt-0.5 text-xs text-text-muted">1200×630 JPG or PNG looks best — that’s the shape social apps show. AI cover generation was removed because it didn’t match the topic well.</p>
             </div>
             <Field label="…or image URL"><input type="url" value={form.coverImage} onChange={set('coverImage')} placeholder="https://" className={inputCls} /></Field>
           </Card>

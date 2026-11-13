@@ -3,6 +3,8 @@ import { Check, Copy, Link2, Loader2, Trash2 } from 'lucide-react';
 import api from '../../../api/axios';
 import { apiError, Badge, Card, ErrorNote, Field, inputCls } from '../../../components/Admin/ui';
 
+const PUBLIC_REVIEW_LINK = 'https://adityaagarwalportfolio.vercel.app/review';
+
 const CopyButton = ({ text }) => {
   const [done, setDone] = useState(false);
   return (
@@ -61,7 +63,15 @@ const InvitePanel = () => {
   return (
     <Card className="mb-6">
       <h2 className="flex items-center gap-2 font-heading text-lg font-bold"><Link2 size={18} className="text-accent-dark" aria-hidden /> Request a review</h2>
-      <p className="mt-1 text-sm text-text-muted">Create a personal link for a manager, mentor or client. It opens the review form with their name filled in, works once, and expires after 60 days. Their review still waits for your approval.</p>
+      <p className="mt-1 text-sm text-text-muted">Or create a personal link for a manager, mentor or client. It opens the review form with their name filled in, works once, and expires after 60 days. Their review still waits for your approval.</p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-border bg-background/40 p-3">
+        <p className="min-w-0 flex-1 text-sm text-text-muted">
+          <span className="font-medium text-foreground">Public review link</span> (anyone can use it; share on LinkedIn, WhatsApp, email):{' '}
+          <span className="break-all font-mono text-xs">{PUBLIC_REVIEW_LINK}</span>
+        </p>
+        <CopyButton text={PUBLIC_REVIEW_LINK} />
+      </div>
 
       <form onSubmit={create} className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
         <Field label="Their name"><input required maxLength={60} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>

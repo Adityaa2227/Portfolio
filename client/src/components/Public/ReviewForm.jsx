@@ -8,9 +8,10 @@ const LIMITS = { name: 60, role: 80 };
 const EMPTY = { name: '', role: '', message: '', rating: 5, website: '' };
 
 /** Modal form for visitors to submit a review. Reviews stay hidden until approved in the admin panel. */
-const ReviewForm = ({ open, onClose }) => {
+const ReviewForm = ({ open, onClose, invite = null }) => {
   const dialog = useRef(null);
-  const [form, setForm] = useState(EMPTY);
+  // A personal invite link pre-fills the name and role.
+  const [form, setForm] = useState(() => (invite ? { ...EMPTY, name: invite.name, role: invite.role || '' } : EMPTY));
   const [hover, setHover] = useState(0);
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
@@ -46,6 +47,7 @@ const ReviewForm = ({ open, onClose }) => {
         message: form.message.trim(),
         rating: form.rating,
         website: form.website, // spam trap: real visitors never fill this
+        ...(invite?.token ? { inviteToken: invite.token } : {}),
       }, { timeout: 15000 });
       setStatus('sent');
       track('review_submit', { label: `${form.rating} stars` });

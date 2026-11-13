@@ -1,11 +1,20 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 // Public Pages
 import Home from './pages/Home';
 import Preloader from './components/Common/Preloader';
-import { markIntroDone } from './lib/intro';
+import { markIntroDone, useIntroDone } from './lib/intro';
 import { useAnalytics } from './lib/analytics';
+
+// AI chat bubble: loaded after the intro, only on public pages.
+const ChatWidget = lazy(() => import('./components/Public/ChatWidget'));
+const PublicChat = () => {
+  const { pathname } = useLocation();
+  const introDone = useIntroDone();
+  if (!introDone || pathname.startsWith('/admin')) return null;
+  return <Suspense fallback={null}><ChatWidget /></Suspense>;
+};
 
 // Other public pages load when first visited (and are prefetched once the intro ends).
 const loadAllProjects = () => import('./pages/Public/AllProjects');
@@ -29,6 +38,7 @@ const TestimonialList = lazy(() => import('./pages/Admin/Testimonials/Testimonia
 const Messages = lazy(() => import('./pages/Admin/Messages'));
 const Analytics = lazy(() => import('./pages/Admin/Analytics'));
 const Settings = lazy(() => import('./pages/Admin/Settings'));
+const Errors = lazy(() => import('./pages/Admin/Errors'));
 const PostList = lazy(() => import('./pages/Admin/Blog/PostList'));
 const PostEditor = lazy(() => import('./pages/Admin/Blog/PostEditor'));
 
@@ -49,6 +59,7 @@ function App() {
     <>
       {/* Outside the Suspense boundary so a lazy page loading never restarts the intro */}
       {!isAdminLoad && <Preloader />}
+      <PublicChat />
       <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <Routes>
         {/* Public Routes */}
@@ -76,6 +87,7 @@ function App() {
             <Route path="/admin/blog/new" element={<PostEditor />} />
             <Route path="/admin/blog/edit/:id" element={<PostEditor />} />
             <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/errors" element={<Errors />} />
           </Route>
         </Route>
 

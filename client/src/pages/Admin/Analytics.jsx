@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  BarChart3, Clock, Download, Eye, FileText, Globe, Mail, MessageSquareQuote, MousePointerClick, RefreshCw, Repeat, Users,
+  BarChart3, Clock, Download, Eye, FileText, Globe, Mail, MessageCircle, MessageSquareQuote, MousePointerClick, RefreshCw, Repeat, Users,
 } from 'lucide-react';
 import api from '../../api/axios';
 import { apiError, Card, Empty, ErrorNote, PageHeader, Spinner } from '../../components/Admin/ui';
@@ -13,7 +13,7 @@ const fmtDuration = (s) => (s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s
 const fmtNum = (n) => (n ?? 0).toLocaleString('en-IN');
 const EVENT_LABEL = {
   pageview: 'viewed', project_view: 'opened project', post_view: 'read post', resume_download: 'downloaded resume',
-  outbound: 'clicked', section_view: 'saw section', contact_submit: 'sent a message', review_submit: 'left a review',
+  outbound: 'clicked', chat_question: 'asked', section_view: 'saw section', contact_submit: 'sent a message', review_submit: 'left a review',
 };
 
 const Stat = ({ Icon, label, value, sub, change }) => (
@@ -177,7 +177,7 @@ const Analytics = () => {
         </Empty>
       ) : (
         <div className={loading ? 'opacity-60 transition-opacity' : ''}>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <Stat Icon={Users} label="Visitors" value={fmtNum(t.visitors)} change={t.change.visitors} sub={`${fmtNum(t.newVisitors)} new · ${fmtNum(t.returningVisitors)} returning`} />
             <Stat Icon={Eye} label="Page views" value={fmtNum(t.pageviews)} change={t.change.pageviews} sub={`${t.pagesPerSession} pages per visit`} />
             <Stat Icon={Clock} label="Avg. time on page" value={fmtDuration(t.avgTimeOnPageSec)} sub={`scrolled ${t.avgScrollPct}% on average`} />
@@ -186,6 +186,7 @@ const Analytics = () => {
             <Stat Icon={Mail} label="Contact messages" value={fmtNum(t.contacts)} sub="sent from the form" />
             <Stat Icon={MessageSquareQuote} label="Reviews submitted" value={fmtNum(t.reviews)} sub="waiting or approved" />
             <Stat Icon={MousePointerClick} label="Outbound clicks" value={fmtNum(t.outboundClicks)} sub="GitHub, LinkedIn, demos, email…" />
+            <Stat Icon={MessageCircle} label="Chat questions" value={fmtNum(t.chatQuestions ?? 0)} sub="asked in “Ask about Aditya”" />
           </div>
 
           <Card className="mt-6">
@@ -254,6 +255,21 @@ const Analytics = () => {
               <div className="mt-1.5 flex justify-between pl-8 text-[10px] text-text-subtle" aria-hidden><span>00:00</span><span>12:00</span><span>23:00</span></div>
             </div>
           </Card>
+
+          {data.questions?.length > 0 && (
+            <Card className="mt-6">
+              <h2 className="flex items-center gap-2 font-heading text-base font-bold"><MessageCircle size={16} className="text-accent-dark" aria-hidden /> What people asked the chat</h2>
+              <ul className="mt-3 divide-y divide-border">
+                {data.questions.map((q, i) => (
+                  <li key={`${q.at}-${i}`} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2 text-sm">
+                    <span className="w-28 shrink-0 text-xs text-text-subtle tabular-nums">{new Date(q.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="flex-1 text-foreground">{q.question}</span>
+                    <span className="text-xs text-text-subtle">{[q.country, q.device].filter(Boolean).join(' · ')}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
           <Card className="mt-6">
             <h2 className="font-heading text-base font-bold">Live activity</h2>

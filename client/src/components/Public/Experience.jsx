@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ChevronDown, Code2, Trophy, GraduationCap, CalendarClock, Briefcase } from 'lucide-react';
+import { ChevronDown, Code2, Trophy, GraduationCap, CalendarClock, Briefcase, Users } from 'lucide-react';
 import { SiPaypal, SiLeetcode } from 'react-icons/si';
 import Section, { SectionHeading } from './Section';
 import fallback from '../../data/experience.json';
 import codingData from '../../data/codingProfiles.json';
+import leadership from '../../data/leadership.json';
 
 const BRAND = {
   PayPal: { node: <SiPaypal size={22} aria-hidden />, color: '#169BD7', tag: 'Backend' },
@@ -132,6 +133,23 @@ export const Experience = ({ experiences = [] }) => {
                     {h.title.includes(' — ') && <span>, {h.title.split(' — ')[1]}</span>}
                   </span>
                   <span className="shrink-0 font-mono text-xs text-text-subtle">{h.year}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-6 glass rounded-2xl p-5" data-reveal="rise">
+            <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Users size={16} className="text-accent-dark" aria-hidden /> Leadership
+            </p>
+            <ul className="mt-3 divide-y divide-border">
+              {leadership.map((l) => (
+                <li key={`${l.role}-${l.org}`} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
+                  <span className="text-text-muted">
+                    <span className="font-medium text-foreground">{l.role}, {l.org}</span>
+                    {l.detail && <span className="block text-xs">{l.detail}</span>}
+                  </span>
+                  <span className="shrink-0 font-mono text-xs text-text-subtle">{l.years}</span>
                 </li>
               ))}
             </ul>

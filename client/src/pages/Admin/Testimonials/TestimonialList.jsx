@@ -4,6 +4,7 @@ import { Check, EyeOff, MessageSquareQuote, Star, Trash2 } from 'lucide-react';
 import api from '../../../api/axios';
 import { apiError, Badge, Empty, ErrorNote, PageHeader, Spinner } from '../../../components/Admin/ui';
 import AiPolish from './AiPolish';
+import InvitePanel from './InvitePanel';
 
 const TABS = [
   { key: 'pending', label: 'Waiting', test: (t) => !t.isApproved },
@@ -53,6 +54,8 @@ const TestimonialList = () => {
     <>
       <PageHeader title="Reviews" description="Reviews submitted on the site stay hidden until you approve them." />
 
+      <InvitePanel />
+
       <div role="tablist" aria-label="Filter reviews" className="mb-5 inline-flex rounded-xl glass p-1">
         {TABS.map(({ key, label, test }) => (
           <button
@@ -88,6 +91,7 @@ const TestimonialList = () => {
                   {Array.from({ length: t.rating || 5 }).map((_, i) => <Star key={i} size={13} className="fill-amber-400 text-amber-400" aria-hidden />)}
                 </span>
                 {t.isApproved ? <Badge tone="success">Approved</Badge> : <Badge tone="warning">Waiting</Badge>}
+                {t.fromInvite && <Badge tone="accent">Invited</Badge>}
                 <span className="ml-auto text-xs text-text-subtle">{new Date(t.createdAt).toLocaleDateString()}</span>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-text-muted">&ldquo;{t.message}&rdquo;</p>

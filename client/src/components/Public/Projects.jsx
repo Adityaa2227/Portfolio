@@ -80,6 +80,9 @@ export const Projects = ({ projects = [] }) => {
   // Homepage shows exactly the projects starred (Featured) in Admin -> Projects, in that order.
   // With nothing starred, it falls back to the first 5.
   const list = featured.length > 0 ? featured : published.slice(0, 5);
+  // Identity of the cards shown: when the bundled list is swapped for the admin panel's list
+  // (same length, different cards), the coverflow positions must be applied again.
+  const listKey = list.map((p) => slugOf(p)).join('|');
   const [index, setIndex] = useState(0);
   const stage = useRef(null);
   const drag = useRef(null);
@@ -110,7 +113,7 @@ export const Projects = ({ projects = [] }) => {
       card.dataset.active = o === 0 ? 'true' : 'false';
       card.setAttribute('aria-hidden', o === 0 ? 'false' : 'true');
     });
-  }, [index, list.length]);
+  }, [index, list.length, listKey]);
 
   // 3D tilt on the active card
   useEffect(() => {
@@ -165,7 +168,7 @@ export const Projects = ({ projects = [] }) => {
         >
           {list.map((p, i) => (
             <div
-              key={p._id || p.title}
+              key={slugOf(p)}
               className="cf-card absolute left-1/2 top-0 w-[84vw] max-w-[540px]"
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${list.length}: ${p.title}`}

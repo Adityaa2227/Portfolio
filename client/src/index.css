@@ -212,3 +212,11 @@ select:focus {
 .prose-post table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
 .prose-post th, .prose-post td { border: 1px solid rgb(var(--c-border)); padding: 0.5em 0.75em; text-align: left; }
 .prose-post th { color: rgb(var(--c-foreground)); background: rgb(var(--c-accent) / 0.08); }
+
+/* Chat answers (sanitised Markdown) */
+.chat-answer > * + * { margin-top: 0.5em; }
+.chat-answer strong { color: rgb(var(--c-foreground)); font-weight: 600; }
+.chat-answer ul, .chat-answer ol { padding-left: 1.1em; list-style: disc; }
+.chat-answer li + li { margin-top: 0.25em; }
+.chat-answer a { color: rgb(var(--c-accent-strong)); text-decoration: underline; }
+.chat-answer code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }

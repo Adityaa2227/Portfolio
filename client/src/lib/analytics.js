@@ -31,7 +31,7 @@ const store = (storage, key, make) => {
 };
 
 let ids = null;
-const getIds = () => {
+export const getIds = () => {
   if (!ids) {
     const visitor = store(localStorage, 'aa-vid', randomId);
     const session = store(sessionStorage, 'aa-sid', randomId);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderGit2, FileText, MessageSquareQuote, Mail, LogOut, ExternalLink, X, BarChart3, NotebookPen, Settings } from 'lucide-react';
+import { LayoutDashboard, FolderGit2, FileText, MessageSquareQuote, Mail, LogOut, ExternalLink, X, BarChart3, NotebookPen, Settings, Bug } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../Common/Logo';
 
@@ -12,6 +12,7 @@ export const NAV = [
   { Icon: MessageSquareQuote, label: 'Reviews', path: '/admin/reviews', badge: 'pendingReviews' },
   { Icon: Mail, label: 'Messages', path: '/admin/messages' },
   { Icon: NotebookPen, label: 'Blog', path: '/admin/blog' },
+  { Icon: Bug, label: 'Errors', path: '/admin/errors' },
   { Icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
 

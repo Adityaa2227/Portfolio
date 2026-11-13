@@ -11,6 +11,19 @@ const initials = (name) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('
 export const Testimonials = () => {
   const [items, setItems] = useState(() => data.filter((t) => t.isApproved !== false));
   const [formOpen, setFormOpen] = useState(false);
+  const [invite, setInvite] = useState(null); // personal "request a review" link
+
+  // /?review=<token>: open the form pre-filled for that person (if the link is still valid).
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get('review');
+    if (!token || !/^[a-f0-9]{32}$/.test(token)) return;
+    api.get(`/review-invites/${token}`, { timeout: 20000 })
+      .then(({ data: inv }) => {
+        setInvite({ token, name: inv.name, role: inv.role });
+        setFormOpen(true);
+      })
+      .catch(() => {});
+  }, []);
 
   // Approved reviews from the backend (new submissions only appear after admin approval).
   useEffect(() => {
@@ -125,7 +138,7 @@ export const Testimonials = () => {
           <PenLine size={14} aria-hidden /> Write a review
         </button>
       </div>
-      <ReviewForm open={formOpen} onClose={() => setFormOpen(false)} />
+      <ReviewForm key={invite?.token || 'public'} open={formOpen} invite={invite} onClose={() => setFormOpen(false)} />
     </Section>
   );
 };

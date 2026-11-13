@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, KeyRound, Loader2, Mail, Save, Sparkles } from 'lucide-react';
+import { BarChart3, CheckCircle2, KeyRound, Loader2, Mail, Save, Send, Sparkles } from 'lucide-react';
 import api from '../../api/axios';
 import { apiError, Card, ErrorNote, Field, inputCls, PageHeader, Spinner, Toggle } from '../../components/Admin/ui';
 
@@ -17,6 +17,21 @@ const Settings = () => {
   const [pwBusy, setPwBusy] = useState(false);
   const [pwError, setPwError] = useState('');
   const [pwDone, setPwDone] = useState(false);
+
+  const [reportBusy, setReportBusy] = useState(false);
+  const [reportMsg, setReportMsg] = useState(null);
+  const sendTestReport = async () => {
+    setReportBusy(true);
+    setReportMsg(null);
+    try {
+      await api.post('/reports/weekly/test', {}, { timeout: 60000 });
+      setReportMsg({ ok: true, text: 'Sent. Check your inbox.' });
+    } catch (err) {
+      setReportMsg({ ok: false, text: apiError(err, 'Couldn’t send the report.') });
+    } finally {
+      setReportBusy(false);
+    }
+  };
 
   useEffect(() => {
     api.get('/settings')
@@ -97,6 +112,28 @@ const Settings = () => {
               onChange={(v) => save({ contactAutoReply: v })}
               label="Send an automatic “thanks” reply"
               description="People who use the contact form get a short confirmation from you via Brevo. You always get their message by email."
+            />
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="flex items-center gap-2 font-heading text-lg font-bold"><BarChart3 size={18} className="text-accent-dark" aria-hidden /> Reports &amp; alerts</h2>
+            <Toggle
+              checked={settings.weeklyReport}
+              onChange={(v) => save({ weeklyReport: v })}
+              label="Weekly report email"
+              description="Every Monday around 9:00 AM IST: visitors, sources, projects opened, resume downloads, chat questions, messages and reviews."
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={sendTestReport} disabled={reportBusy} className="btn-outline !py-2 text-sm disabled:opacity-60">
+                {reportBusy ? <Loader2 size={15} className="animate-spin" aria-hidden /> : <Send size={15} aria-hidden />} Send this week’s report now
+              </button>
+              {reportMsg && <span className={`text-sm ${reportMsg.ok ? 'text-emerald-300' : 'text-red-300'}`} role="status">{reportMsg.text}</span>}
+            </div>
+            <Toggle
+              checked={settings.errorAlerts}
+              onChange={(v) => save({ errorAlerts: v })}
+              label="Error alert emails"
+              description="An email when the site or API hits a new error (at most once a day per error). Errors are always listed in Admin → Errors."
             />
           </Card>
 

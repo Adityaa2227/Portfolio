@@ -21,11 +21,14 @@ const AboutArt = () => {
     <div className="relative overflow-hidden rounded-3xl border border-border bg-surface/60 aspect-[4/3]">
       {hasImage ? (
         <img
-          src="/about-workspace.webp"
-          alt="Aditya's workspace"
+          src="/about-portrait.webp"
+          alt="Aditya Agarwal at his desk in a purple-lit workspace"
+          width="1200"
+          height="1200"
+          loading="lazy"
           onError={() => setHasImage(false)}
           data-parallax
-          className="absolute inset-0 h-[115%] w-full object-cover"
+          className="absolute inset-0 h-[115%] w-full object-cover object-[50%_22%]"
         />
       ) : (
         <div data-parallax className="absolute inset-0 h-[115%]">

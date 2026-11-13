@@ -8,3 +8,9 @@ build
 .vscode
 .env
 
+
+# Reference screenshots / mock-ups (not part of the site)
+*.png
+!client/public/**/*.png
+# Old server's uploaded files (the server itself moved to Aditya Universal Backend)
+server/

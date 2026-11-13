@@ -1,36 +1,13 @@
 {
   "name": "port",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
-    "server": "nodemon server/server.js",
-    "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm install"
+    "dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "lint": "npm run lint --prefix client"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "express-async-handler": "^1.2.0",
-    "geoip-lite": "^1.4.10",
-    "helmet": "^8.1.0",
-    "imagekit": "^6.0.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.3",
-    "morgan": "^1.10.1",
-    "multer": "^2.0.2",
-    "nodemailer": "^7.0.12",
-    "socket.io": "^4.8.3",
-    "ua-parser-js": "^2.0.8"
-  },
-  "devDependencies": {
-    "concurrently": "^9.2.1"
-  }
+  "description": "Aditya Agarwal portfolio. The website is in client/; its API is the portfolio module of Aditya Universal Backend."
 }

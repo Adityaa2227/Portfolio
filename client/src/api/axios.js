@@ -2,14 +2,18 @@ import axios from 'axios';
 
 /**
  * The portfolio API lives in the "portfolio" module of Aditya Universal Backend
- * (/api/v1/portfolio). Override with VITE_API_URL if it ever moves.
+ * (/api/v1/portfolio). Override with VITE_PORTFOLIO_API_URL if it ever moves.
+ * (Deliberately not VITE_API_URL: an old Vercel setting with that name pointed at the
+ * retired portfolio-backend and silently overrode this.)
  */
 export const API_ORIGIN = import.meta.env.PROD
   ? 'https://aditya-universal-backend.onrender.com'
   : 'http://localhost:5000';
 
+export const PORTFOLIO_API = import.meta.env.VITE_PORTFOLIO_API_URL || `${API_ORIGIN}/api/v1/portfolio`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || `${API_ORIGIN}/api/v1/portfolio`,
+  baseURL: PORTFOLIO_API,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -48,12 +52,12 @@ api.interceptors.response.use(
 export default api;
 
 /**
- * GET for pages with no bundled fallback (e.g. the blog). Waits up to 60 s and retries
- * once on timeouts, network errors, 5xx and 429 (rate limited, after a short pause).
+ * GET for pages with no bundled fallback (e.g. the blog). Retries once on timeouts,
+ * network errors, 5xx and 429 (rate limited, after a short pause).
  * Other 4xx answers (e.g. 404 not found) are not retried.
  */
-export const getWithWakeup = async (url, config = {}) => {
-  const attempt = () => api.get(url, { timeout: 60000, ...config });
+export const getWithRetry = async (url, config = {}) => {
+  const attempt = () => api.get(url, { timeout: 20000, ...config });
   try {
     return await attempt();
   } catch (err) {

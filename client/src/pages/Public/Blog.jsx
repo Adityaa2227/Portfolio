@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Loader2, NotebookPen, Search } from 'lucide-react';
 import Navbar from '../../components/Public/Navbar';
 import Footer from '../../components/Public/Footer';
-import { getWithWakeup } from '../../api/axios';
+import { getWithRetry } from '../../api/axios';
 import { useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
 import { usePageMeta } from '../../lib/pageMeta';
@@ -25,7 +25,7 @@ const Blog = () => {
   useEffect(() => { window.scrollTo(0, 0); return startSmoothScroll(); }, []);
   useEffect(() => {
     let alive = true;
-    getWithWakeup('/posts')
+    getWithRetry('/posts')
       .then(({ data }) => { if (alive) { setPosts(Array.isArray(data) ? data : []); setFailed(false); } })
       .catch(() => { if (alive) { setPosts([]); setFailed(true); } });
     return () => { alive = false; };
@@ -55,12 +55,12 @@ const Blog = () => {
           </header>
 
           {posts === null ? (
-            <p className="mt-16 flex items-center gap-2 text-text-muted" role="status"><Loader2 size={18} className="animate-spin" aria-hidden /> Loading posts… (the first visit after a quiet spell can take up to a minute while the server wakes up)</p>
+            <p className="mt-16 flex items-center gap-2 text-text-muted" role="status"><Loader2 size={18} className="animate-spin" aria-hidden /> Loading posts…</p>
           ) : posts.length === 0 ? (
             <div className="mt-16 rounded-2xl glass p-10 text-center">
               <NotebookPen size={34} className="mx-auto text-accent-dark" aria-hidden />
-              <h2 className="mt-4 font-heading text-xl font-bold">{failed ? 'The server is taking too long to answer' : 'First posts coming soon'}</h2>
-              <p className="mx-auto mt-2 max-w-[44ch] text-text-muted">{failed ? 'It may still be waking up. Try again in a few seconds.' : 'I’m writing up notes on system design, testing and GenAI. Check back soon.'}</p>
+              <h2 className="mt-4 font-heading text-xl font-bold">{failed ? 'Posts couldn’t be loaded' : 'First posts coming soon'}</h2>
+              <p className="mx-auto mt-2 max-w-[44ch] text-text-muted">{failed ? 'Something went wrong on our side. Please try again.' : 'I’m writing up notes on system design, testing and GenAI. Check back soon.'}</p>
               {failed && (
                 <button type="button" onClick={() => { setPosts(null); setAttempt((n) => n + 1); }} className="btn-outline mt-6">
                   Try again

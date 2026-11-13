@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock, Loader2 } from 'lucide-react';
 import Navbar from '../../components/Public/Navbar';
 import Footer from '../../components/Public/Footer';
-import { getWithWakeup } from '../../api/axios';
+import { getWithRetry } from '../../api/axios';
 import { useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
 import { usePageMeta } from '../../lib/pageMeta';
@@ -27,7 +27,7 @@ const BlogPost = () => {
   useEffect(() => {
     let alive = true;
     const key = `${slug}#${attempt}`;
-    getWithWakeup(`/posts/${encodeURIComponent(slug)}`)
+    getWithRetry(`/posts/${encodeURIComponent(slug)}`)
       .then(({ data }) => { if (alive) { setResult({ slug: key, post: data, failed: false }); track('post_view', { target: slug }); } })
       .catch((err) => { if (alive) setResult({ slug: key, post: null, failed: err?.response?.status !== 404 }); });
     return () => { alive = false; };
@@ -56,8 +56,8 @@ const BlogPost = () => {
           ) : post === null ? (
             failed ? (
               <div className="mt-16">
-                <h1 className="font-heading text-3xl font-bold">The server is taking too long to answer</h1>
-                <p className="mt-2 text-text-muted">It may still be waking up. Try again in a few seconds.</p>
+                <h1 className="font-heading text-3xl font-bold">This post couldn’t be loaded</h1>
+                <p className="mt-2 text-text-muted">Something went wrong on our side. Please try again.</p>
                 <button type="button" onClick={() => setAttempt((n) => n + 1)} className="btn-outline mt-6">Try again</button>
               </div>
             ) : (

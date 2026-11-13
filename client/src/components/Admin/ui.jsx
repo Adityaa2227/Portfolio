@@ -76,7 +76,7 @@ export const apiError = (err, fallback) => {
   const msg = err?.response?.data?.message;
   if (typeof msg === 'string' && msg.length < 300) return msg;
   if (err?.response?.status === 401) return 'Your session expired. Log in again.';
-  if (!err?.response) return 'Can’t reach the server. It may be waking up; try again in a few seconds.';
+  if (!err?.response) return 'Can’t reach the server. Check your connection and try again.';
   return fallback;
 };
 

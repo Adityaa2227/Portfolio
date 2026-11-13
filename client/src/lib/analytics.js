@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { API_ORIGIN } from '../api/axios';
+import { PORTFOLIO_API } from '../api/axios';
 
 /**
  * First-party, cookie-free analytics. Sends small events to the backend:
@@ -10,7 +10,7 @@ import { API_ORIGIN } from '../api/axios';
  * Off on localhost and in the admin panel.
  */
 
-const ENDPOINT = `${import.meta.env.VITE_API_URL || `${API_ORIGIN}/api/v1/portfolio`}/analytics/event`;
+const ENDPOINT = `${PORTFOLIO_API}/analytics/event`;
 const ENABLED =
   typeof window !== 'undefined' &&
   !/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname) &&

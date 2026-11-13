@@ -48,9 +48,9 @@ api.interceptors.response.use(
 export default api;
 
 /**
- * GET for pages with no bundled fallback (e.g. the blog). The backend runs on a free
- * plan that sleeps when idle and needs up to ~60 s to wake, so wait longer and retry
- * once on timeouts, network errors and 5xx answers. 4xx (e.g. 404) are not retried.
+ * GET for pages with no bundled fallback (e.g. the blog). Waits up to 60 s and retries
+ * once on timeouts, network errors, 5xx and 429 (rate limited, after a short pause).
+ * Other 4xx answers (e.g. 404 not found) are not retried.
  */
 export const getWithWakeup = async (url, config = {}) => {
   const attempt = () => api.get(url, { timeout: 60000, ...config });
@@ -58,7 +58,11 @@ export const getWithWakeup = async (url, config = {}) => {
     return await attempt();
   } catch (err) {
     const status = err?.response?.status;
-    if (status && status < 500) throw err;
+    if (status === 429) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    } else if (status && status < 500) {
+      throw err;
+    }
     return attempt();
   }
 };

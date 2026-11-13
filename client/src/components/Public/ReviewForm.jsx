@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Loader2, Send, Star, X } from 'lucide-react';
 import api from '../../api/axios';
+import { track } from '../../lib/analytics';
 import { stopScroll, resumeScroll } from '../../lib/smooth';
 
 const LIMITS = { name: 60, role: 80 };
@@ -47,6 +48,7 @@ const ReviewForm = ({ open, onClose }) => {
         website: form.website, // spam trap: real visitors never fill this
       }, { timeout: 15000 });
       setStatus('sent');
+      track('review_submit', { label: `${form.rating} stars` });
     } catch (err) {
       setStatus('error');
       setError(err?.response?.data?.message || 'Your review couldn’t be sent. Check your connection and try again.');

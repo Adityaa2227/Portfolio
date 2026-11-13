@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { SOCIALS } from './Hero';
 import api from '../../api/axios';
+import { track } from '../../lib/analytics';
 import { SplitWords } from '../../lib/motion';
 
 const EMAIL = 'adityaagar324@gmail.com';
@@ -52,6 +53,7 @@ export const Contact = () => {
         message: form.message.trim(),
       }, { timeout: 15000 });
       setStatus('sent');
+      track('contact_submit', { label: form.subject || 'no subject' });
       setForm(EMPTY);
     } catch {
       setStatus('error');

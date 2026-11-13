@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ImagePlus, Loader2, Save, X } from 'lucide-react';
 import api from '../../../api/axios';
 import AiDraftPanel from './AiDraftPanel';
+import GalleryEditor from './GalleryEditor';
 import { apiError, Card, ErrorNote, Field, inputCls, PageHeader, Spinner, Toggle, fileUrl } from '../../../components/Admin/ui';
 
 const EMPTY = {
@@ -32,6 +33,7 @@ const ProjectForm = () => {
   const [form, setForm] = useState(EMPTY);
   const [categories, setCategories] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [gallery, setGallery] = useState([]);
   const [loading, setLoading] = useState(Boolean(id));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -52,6 +54,7 @@ const ProjectForm = () => {
           youtubeVideoUrl: p.youtubeVideoUrl || '',
           projectImage: p.projectImage || '',
         });
+        setGallery(p.galleryImages || []);
       })
       .catch((err) => setError(apiError(err, 'Couldn’t load the project.')))
       .finally(() => setLoading(false));
@@ -75,6 +78,7 @@ const ProjectForm = () => {
       technologies: techList.join(','),
     };
     Object.entries(payload).forEach(([k, v]) => body.append(k, String(v)));
+    body.append('galleryImages', JSON.stringify(gallery));
     if (imageFile) body.append('image', imageFile);
 
     try {
@@ -194,6 +198,8 @@ const ProjectForm = () => {
               <input type="url" value={imageFile ? '' : form.projectImage} disabled={Boolean(imageFile)} onChange={set('projectImage')} placeholder="https://" className={inputCls} />
             </Field>
           </Card>
+
+          <GalleryEditor images={gallery} onChange={setGallery} />
 
           <Card className="space-y-4">
             <h2 className="font-heading text-lg font-bold">Project page buttons</h2>

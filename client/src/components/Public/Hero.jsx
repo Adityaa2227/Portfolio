@@ -3,6 +3,7 @@ import { ArrowRight, Github, Linkedin, Code2, Mail, ChevronDown, Briefcase, Cale
 import { TextPlugin } from 'gsap/TextPlugin';
 import { gsap } from '../../lib/motion';
 import { scrollToId } from '../../lib/smooth';
+import OpenToWork from './OpenToWork';
 
 gsap.registerPlugin(TextPlugin);
 
@@ -94,6 +95,7 @@ export const Hero = ({ ready = true }) => {
 
       <div className="page-wrap grid w-full items-center gap-12 lg:grid-cols-2">
         <div className={`hero-copy max-w-xl ${ready ? '' : 'invisible'}`}>
+          <OpenToWork className="h-stagger mb-6" />
           <h1 className="font-heading font-bold leading-[1.05] tracking-tight">
             <span className="sr-only">{GREETING} Aditya Agarwal</span>
             <span aria-hidden className="block text-4xl sm:text-5xl lg:text-6xl text-foreground">
@@ -143,19 +145,19 @@ export const Hero = ({ ready = true }) => {
           </ul>
 
           {/* Stats strip */}
-          <dl className="h-stagger mt-9 grid grid-cols-3 gap-3 rounded-2xl glass p-3">
+          <ul className="h-stagger mt-9 grid grid-cols-3 gap-3 rounded-2xl glass p-3">
             {STATS.map(({ Icon, value, suffix, label }) => (
-              <div key={label} className="flex items-center gap-2.5 rounded-xl px-2 py-1.5">
+              <li key={label} className="flex items-center gap-2.5 rounded-xl px-2 py-1.5">
                 <Icon size={20} className="shrink-0 text-accent-dark" aria-hidden />
-                <div>
-                  <dd className="font-heading text-lg font-bold leading-none text-foreground tabular-nums">
+                <p>
+                  <span className="block font-heading text-lg font-bold leading-none text-foreground tabular-nums">
                     <span data-count={value}>{value}</span>{suffix}
-                  </dd>
-                  <dt className="mt-1 text-[11px] text-text-muted">{label}</dt>
-                </div>
-              </div>
+                  </span>
+                  <span className="mt-1 block text-[11px] text-text-muted">{label}</span>
+                </p>
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </div>
 

@@ -61,7 +61,7 @@ const TestimonialList = () => {
             role="tab"
             aria-selected={tab === key}
             onClick={() => setTab(key)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === key ? 'bg-accent text-white' : 'text-text-muted hover:text-foreground'}`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${tab === key ? 'bg-[#7C3AED] text-white' : 'text-text-muted hover:text-foreground'}`}
           >
             {label}
             {reviews && <span className="ml-1.5 opacity-70">{reviews.filter(test).length}</span>}
@@ -84,7 +84,7 @@ const TestimonialList = () => {
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="font-semibold text-foreground">{t.name}</span>
                 <span className="text-sm text-text-muted">{t.role}</span>
-                <span className="flex" aria-label={`${t.rating} out of 5 stars`}>
+                <span className="flex" role="img" aria-label={`${t.rating} out of 5 stars`}>
                   {Array.from({ length: t.rating || 5 }).map((_, i) => <Star key={i} size={13} className="fill-amber-400 text-amber-400" aria-hidden />)}
                 </span>
                 {t.isApproved ? <Badge tone="success">Approved</Badge> : <Badge tone="warning">Waiting</Badge>}

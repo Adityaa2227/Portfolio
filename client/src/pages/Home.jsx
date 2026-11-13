@@ -14,6 +14,9 @@ import { useSiteMotion, ScrollTrigger } from '../lib/motion';
 import { startSmoothScroll, scrollToId } from '../lib/smooth';
 import { useIntroDone } from '../lib/intro';
 import { usePageMeta } from '../lib/pageMeta';
+import { useSectionTracking } from '../lib/analytics';
+
+const TRACKED_SECTIONS = ['about', 'skills', 'projects', 'experience', 'reviews', 'contact'];
 
 // Three.js is heavy, so the star field loads after the page shell.
 const Starfield = lazy(() => import('../components/Common/Starfield'));
@@ -35,6 +38,7 @@ export const Home = () => {
   }, [ready, hash]);
 
   useSiteMotion(scope, [ready, projects.length]);
+  useSectionTracking(TRACKED_SECTIONS, ready);
 
   return (
     <>

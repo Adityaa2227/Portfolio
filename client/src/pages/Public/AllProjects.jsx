@@ -29,7 +29,7 @@ const ProjectCard = ({ project }) => {
       {/* Framed screenshot */}
       <div className="relative px-6 pt-8 pb-4" style={{ background: 'radial-gradient(80% 90% at 50% 100%, rgb(var(--c-accent) / 0.28), transparent 70%)' }}>
         {project.isFeatured && (
-          <span className="absolute left-3 top-3 z-10 rounded-md bg-accent px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_6px_20px_-6px_rgb(var(--c-accent))]">
+          <span className="absolute left-3 top-3 z-10 rounded-md bg-[#7C3AED] px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_6px_20px_-6px_rgb(var(--c-accent))]">
             Featured
           </span>
         )}
@@ -172,7 +172,7 @@ export const AllProjects = () => {
                   onClick={withFlip(() => setCategory(cat))}
                   className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-all ${
                     category === cat
-                      ? 'border-accent bg-accent text-white shadow-[0_8px_24px_-8px_rgb(var(--c-accent))]'
+                      ? 'border-accent bg-[#7C3AED] text-white shadow-[0_8px_24px_-8px_rgb(var(--c-accent))]'
                       : 'border-border bg-surface/60 text-text-muted hover:border-accent/60 hover:text-foreground'
                   }`}
                 >

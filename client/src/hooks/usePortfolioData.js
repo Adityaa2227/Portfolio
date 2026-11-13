@@ -38,8 +38,11 @@ const mergeProjects = (remote) => {
     .map((p) => {
       const key = slugOf(p);
       const base = local.get(key) || {};
-      const borrowed = Object.fromEntries(CONTENT_FIELDS.filter((f) => !hasValue(p[f]) && hasValue(base[f])).map((f) => [f, base[f]]));
-      return { ...p, ...borrowed, slug: key };
+      // Old seed data stored screenshots as relative paths (/projects/x.png) to files that no
+      // longer exist; treat anything that isn't a web URL as missing.
+      const own = { ...p, projectImage: /^https?:\/\//i.test(p.projectImage || '') ? p.projectImage : '' };
+      const borrowed = Object.fromEntries(CONTENT_FIELDS.filter((f) => !hasValue(own[f]) && hasValue(base[f])).map((f) => [f, base[f]]));
+      return { ...own, ...borrowed, slug: key };
     })
     .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 };

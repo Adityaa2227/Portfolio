@@ -1,15 +1,18 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderGit2, FileText, MessageSquareQuote, Mail, LogOut, ExternalLink, X } from 'lucide-react';
+import { LayoutDashboard, FolderGit2, FileText, MessageSquareQuote, Mail, LogOut, ExternalLink, X, BarChart3, NotebookPen, Settings } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../Common/Logo';
 
 export const NAV = [
   { Icon: LayoutDashboard, label: 'Overview', path: '/admin/dashboard' },
+  { Icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
   { Icon: FolderGit2, label: 'Projects', path: '/admin/projects' },
   { Icon: FileText, label: 'Resume', path: '/admin/resume' },
   { Icon: MessageSquareQuote, label: 'Reviews', path: '/admin/reviews', badge: 'pendingReviews' },
   { Icon: Mail, label: 'Messages', path: '/admin/messages' },
+  { Icon: NotebookPen, label: 'Blog', path: '/admin/blog' },
+  { Icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
 
 const Sidebar = ({ counts = {}, onNavigate, onClose }) => {
@@ -45,7 +48,7 @@ const Sidebar = ({ counts = {}, onNavigate, onClose }) => {
             <Icon size={18} aria-hidden />
             <span className="flex-1">{label}</span>
             {badge && counts[badge] > 0 && (
-              <span className="rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-white" aria-label={`${counts[badge]} waiting`}>
+              <span className="rounded-full bg-[#7C3AED] px-2 py-0.5 text-[11px] font-semibold text-white" aria-label={`${counts[badge]} waiting`}>
                 {counts[badge]}
               </span>
             )}

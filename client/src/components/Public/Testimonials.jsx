@@ -86,7 +86,7 @@ export const Testimonials = () => {
                 <span className="block font-semibold text-foreground">{t.name}</span>
                 <span className="block text-sm text-text-muted">{t.role}</span>
               </span>
-              <span className="flex gap-0.5" aria-label={`${t.rating || 5} out of 5 stars`}>
+              <span className="flex gap-0.5" role="img" aria-label={`${t.rating || 5} out of 5 stars`}>
                 {Array.from({ length: t.rating || 5 }).map((_, i) => (
                   <Star key={i} size={15} className="fill-amber-400 text-amber-400" aria-hidden />
                 ))}

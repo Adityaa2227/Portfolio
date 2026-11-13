@@ -189,3 +189,26 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
   .rocket-flame { animation: none; }
 }
+
+/* Blog post typography (Markdown output) */
+.prose-post { color: rgb(var(--c-text-muted)); line-height: 1.8; font-size: 1.0625rem; overflow-wrap: anywhere; }
+.prose-post > * + * { margin-top: 1.1em; }
+.prose-post h2 { margin-top: 2.2em; font-family: Poppins, sans-serif; font-weight: 700; font-size: 1.6rem; line-height: 1.3; color: rgb(var(--c-foreground)); }
+.prose-post h3 { margin-top: 1.8em; font-family: Poppins, sans-serif; font-weight: 700; font-size: 1.25rem; color: rgb(var(--c-foreground)); }
+.prose-post h4 { margin-top: 1.5em; font-weight: 600; color: rgb(var(--c-foreground)); }
+.prose-post strong { color: rgb(var(--c-foreground)); font-weight: 600; }
+.prose-post a { color: rgb(var(--c-accent-strong)); text-decoration: underline; text-underline-offset: 3px; }
+.prose-post ul, .prose-post ol { padding-left: 1.4em; }
+.prose-post ul { list-style: disc; }
+.prose-post ol { list-style: decimal; }
+.prose-post li + li { margin-top: 0.4em; }
+.prose-post li::marker { color: rgb(var(--c-accent)); }
+.prose-post blockquote { border-left: 3px solid rgb(var(--c-accent)); padding: 0.2em 0 0.2em 1em; font-style: italic; }
+.prose-post code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.88em; background: rgb(var(--c-accent) / 0.12); color: rgb(var(--c-foreground)); padding: 0.15em 0.4em; border-radius: 6px; }
+.prose-post pre { background: rgb(var(--c-background)); border: 1px solid rgb(var(--c-border)); border-radius: 14px; padding: 1.1em 1.2em; overflow-x: auto; line-height: 1.6; }
+.prose-post pre code { background: none; padding: 0; font-size: 0.85rem; }
+.prose-post img { border-radius: 14px; border: 1px solid rgb(var(--c-border)); }
+.prose-post hr { border-color: rgb(var(--c-border)); margin: 2.5em 0; }
+.prose-post table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+.prose-post th, .prose-post td { border: 1px solid rgb(var(--c-border)); padding: 0.5em 0.75em; text-align: left; }
+.prose-post th { color: rgb(var(--c-foreground)); background: rgb(var(--c-accent) / 0.08); }

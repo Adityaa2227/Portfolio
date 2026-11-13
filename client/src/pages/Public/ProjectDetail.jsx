@@ -13,6 +13,7 @@ import { startSmoothScroll } from '../../lib/smooth';
 import { FALLBACK_IMAGE, isRealLink, metricsOf, slugOf } from '../../lib/projects';
 import { ProjectIconTile, techIcon } from '../../lib/projectMeta';
 import { usePageMeta } from '../../lib/pageMeta';
+import { track } from '../../lib/analytics';
 
 const Starfield = lazy(() => import('../../components/Common/Starfield'));
 
@@ -98,6 +99,11 @@ export const ProjectDetail = () => {
   const published = useMemo(() => projects.filter((p) => p.isPublished !== false), [projects]);
   const project = published.find((p) => slugOf(p) === slug || p._id === slug);
 
+  const projectSlug = project ? slugOf(project) : null;
+  useEffect(() => {
+    if (projectSlug) track('project_view', { target: projectSlug });
+  }, [projectSlug]);
+
   usePageMeta({
     title: project ? project.title : 'Project not found',
     description: project ? (project.shortDescription || project.description) : undefined,
@@ -152,7 +158,7 @@ export const ProjectDetail = () => {
   const demo = isRealLink(project.youtubeVideoUrl) ? project.youtubeVideoUrl : null;
   const slides = [
     { type: 'image', src: project.projectImage || FALLBACK_IMAGE },
-    ...(project.images || []).map((src) => ({ type: 'image', src })),
+    ...[...new Set([...(project.galleryImages || []), ...(project.images || [])])].map((src) => ({ type: 'image', src })),
     ...(video ? [{ type: 'video', src: video }] : []),
   ];
 

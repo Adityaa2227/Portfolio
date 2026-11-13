@@ -11,6 +11,7 @@ export const NAV = [
   { name: 'Projects', to: 'projects' },
   { name: 'Experience', to: 'experience' },
   { name: 'Reviews', to: 'reviews' },
+  { name: 'Blog', to: 'blog', route: '/blog' },
   { name: 'Contact', to: 'contact' },
 ];
 
@@ -21,7 +22,7 @@ export const Navbar = ({ activeResumeUrl = '/resume.pdf' }) => {
   const bar = useRef(null);
   const { pathname } = useLocation();
   const isHome = pathname === '/';
-  const current = isHome ? active : pathname.startsWith('/projects') ? 'projects' : null;
+  const current = isHome ? active : pathname.startsWith('/projects') ? 'projects' : pathname.startsWith('/blog') ? 'blog' : null;
   const navigate = useNavigate();
 
   // Hide on scroll down, show on scroll up; track which section is in view.
@@ -36,7 +37,7 @@ export const Navbar = ({ activeResumeUrl = '/resume.pdf' }) => {
         show(self.direction === 1 && self.scroll() > 400 ? -130 : 0);
       },
     });
-    const sections = NAV.map(({ to }) =>
+    const sections = NAV.filter((n) => !n.route).map(({ to }) =>
       ScrollTrigger.create({
         trigger: `#${to}`,
         start: 'top 45%',
@@ -57,9 +58,12 @@ export const Navbar = ({ activeResumeUrl = '/resume.pdf' }) => {
   const go = (to) => (e) => {
     e.preventDefault();
     setOpen(false);
-    if (isHome) scrollToId(to);
+    const item = NAV.find((n) => n.to === to);
+    if (item?.route) navigate(item.route);
+    else if (isHome) scrollToId(to);
     else navigate(`/#${to}`);
   };
+  const hrefOf = (item) => item.route || `#${item.to}`;
 
   return (
     <>
@@ -74,10 +78,10 @@ export const Navbar = ({ activeResumeUrl = '/resume.pdf' }) => {
           </RouterLink>
 
           <nav aria-label="Sections" className="hidden lg:flex items-center gap-1">
-            {NAV.map(({ name, to }) => (
+            {NAV.map(({ name, to, route }) => (
               <a
                 key={to}
-                href={`#${to}`}
+                href={hrefOf({ to, route })}
                 onClick={go(to)}
                 aria-current={current === to ? 'true' : undefined}
                 className={`relative px-3.5 py-2 text-sm font-medium transition-colors ${
@@ -121,10 +125,10 @@ export const Navbar = ({ activeResumeUrl = '/resume.pdf' }) => {
       {open && (
         <div id="mobile-nav" className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl pt-28 lg:hidden">
           <nav aria-label="Sections" className="page-wrap flex flex-col">
-            {NAV.map(({ name, to }) => (
+            {NAV.map(({ name, to, route }) => (
               <a
                 key={to}
-                href={`#${to}`}
+                href={hrefOf({ to, route })}
                 onClick={go(to)}
                 className={`border-b border-border py-4 font-heading text-3xl font-bold ${current === to ? 'text-gradient' : 'text-foreground'}`}
               >

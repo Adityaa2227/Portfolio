@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Preloader from './components/Common/Preloader';
 import { markIntroDone } from './lib/intro';
+import { useAnalytics } from './lib/analytics';
 
 // Other public pages load when first visited (and are prefetched once the intro ends).
 const loadAllProjects = () => import('./pages/Public/AllProjects');
@@ -12,6 +13,8 @@ const loadProjectDetail = () => import('./pages/Public/ProjectDetail');
 const AllProjects = lazy(loadAllProjects);
 const ProjectDetail = lazy(loadProjectDetail);
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Blog = lazy(() => import('./pages/Public/Blog'));
+const BlogPost = lazy(() => import('./pages/Public/BlogPost'));
 
 // Admin (loaded only when visited). Only projects, resume, reviews and messages are
 // managed here; everything else is edited in code under src/data and src/components.
@@ -24,10 +27,15 @@ const ProjectForm = lazy(() => import('./pages/Admin/Projects/ProjectForm'));
 const ResumeManager = lazy(() => import('./pages/Admin/Resume/ResumeManager'));
 const TestimonialList = lazy(() => import('./pages/Admin/Testimonials/TestimonialList'));
 const Messages = lazy(() => import('./pages/Admin/Messages'));
+const Analytics = lazy(() => import('./pages/Admin/Analytics'));
+const Settings = lazy(() => import('./pages/Admin/Settings'));
+const PostList = lazy(() => import('./pages/Admin/Blog/PostList'));
+const PostEditor = lazy(() => import('./pages/Admin/Blog/PostEditor'));
 
 function App() {
   // The space intro plays on every full page load, except in the admin panel.
   const [isAdminLoad] = React.useState(() => window.location.pathname.startsWith('/admin'));
+  useAnalytics();
   React.useEffect(() => { if (isAdminLoad) markIntroDone(); }, [isAdminLoad]);
 
   // Warm the project pages in the background so clicking a project is instant.
@@ -47,6 +55,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<AllProjects />} />
         <Route path="/projects/:slug" element={<ProjectDetail />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
 
         {/* Admin */}
         <Route path="/admin/login" element={<Login />} />
@@ -61,6 +71,11 @@ function App() {
             <Route path="/admin/reviews" element={<TestimonialList />} />
             <Route path="/admin/testimonials" element={<Navigate to="/admin/reviews" replace />} />
             <Route path="/admin/messages" element={<Messages />} />
+            <Route path="/admin/analytics" element={<Analytics />} />
+            <Route path="/admin/blog" element={<PostList />} />
+            <Route path="/admin/blog/new" element={<PostEditor />} />
+            <Route path="/admin/blog/edit/:id" element={<PostEditor />} />
+            <Route path="/admin/settings" element={<Settings />} />
           </Route>
         </Route>
 

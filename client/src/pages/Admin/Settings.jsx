@@ -61,7 +61,9 @@ const Settings = () => {
     if (pw.newPassword !== pw.confirm) { setPwError('The two new passwords don’t match.'); return; }
     setPwBusy(true);
     try {
-      await api.put('/auth/password', { currentPassword: pw.currentPassword, newPassword: pw.newPassword });
+      const { data } = await api.put('/auth/password', { currentPassword: pw.currentPassword, newPassword: pw.newPassword });
+      // Other sessions are now logged out; keep this one with the fresh token.
+      if (data?.token) { try { localStorage.setItem('token', data.token); } catch { /* ignore */ } }
       setPw({ currentPassword: '', newPassword: '', confirm: '' });
       setPwDone(true);
     } catch (err) {

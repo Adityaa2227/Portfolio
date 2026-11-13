@@ -1,8 +1,12 @@
 {
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        }
-    ]
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://aditya-universal-backend.onrender.com/api/v1/portfolio/sitemap.xml"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

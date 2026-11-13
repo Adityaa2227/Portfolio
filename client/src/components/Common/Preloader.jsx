@@ -74,6 +74,13 @@ const useWarp = (canvasRef, speed) => {
   }, [canvasRef, speed]);
 };
 
+const SEEN_KEY = 'aa-intro-seen';
+
+// The full rocket launch plays once per browser; after that a ~1.2 s warp.
+const hasSeenIntro = () => {
+  try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }
+};
+
 const ROCKET_W = 120; // px; the rocket is twice as tall
 
 /** The launch rocket, drawn pointing up. The flame and trail are scaled by the timeline. */
@@ -152,6 +159,7 @@ const Preloader = () => {
   const tlRef = useRef(null);
 
   const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [quick] = useState(hasSeenIntro);
 
   useWarp(canvas, speed);
 
@@ -160,6 +168,7 @@ const Preloader = () => {
     const finish = () => {
       document.documentElement.style.overflow = '';
       markIntroDone();
+      try { localStorage.setItem(SEEN_KEY, '1'); } catch { /* private mode: full intro again next time */ }
       setVisible(false);
     };
 
@@ -169,6 +178,26 @@ const Preloader = () => {
         gsap.timeline({ onComplete: finish })
           .set('.pl-logo-wrap', { autoAlpha: 1 })
           .to(root.current, { autoAlpha: 0, duration: 0.4 }, '+=0.6');
+        return;
+      }
+
+      if (quick) {
+        // Returning visitor: AA locks in, warp, iris opens. About 1.2 s.
+        gsap.set('.pl-rocket, .pl-meta, .pl-count, .pl-smoke, .pl-pad', { autoAlpha: 0 });
+        speed.current.v = 0.02;
+        const q = gsap.timeline({ onComplete: finish });
+        tlRef.current = q;
+        q.set('.pl-logo-wrap', { autoAlpha: 1 })
+          .fromTo('.pl-ring', { scale: 0.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4, ease: 'expo.out' }, 0)
+          .fromTo('.pl-planet-glow', { scale: 0.5, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4 }, 0)
+          .fromTo('.pl-a1', { xPercent: -160, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.35, ease: 'power4.out' }, 0)
+          .fromTo('.pl-a2', { xPercent: 160, autoAlpha: 0 }, { xPercent: 0, autoAlpha: 1, duration: 0.35, ease: 'power4.out' }, 0)
+          .addLabel('out', 0.4)
+          .to(speed.current, { v: 0.09, duration: 0.4, ease: 'power3.in' }, 'out')
+          .to('.pl-logo-wrap', { scale: 2, autoAlpha: 0, filter: 'blur(10px)', duration: 0.4, ease: 'power3.in' }, 'out')
+          .fromTo('.pl-flash', { autoAlpha: 0 }, { autoAlpha: 0.7, duration: 0.12 }, 'out+=0.3')
+          .to('.pl-flash', { autoAlpha: 0, duration: 0.3 }, '>')
+          .fromTo(root.current, { '--hole': '-10%' }, { '--hole': '150%', duration: 0.5, ease: 'expo.inOut' }, 'out+=0.3');
         return;
       }
 
@@ -264,7 +293,7 @@ const Preloader = () => {
       ctx.revert();
       document.documentElement.style.overflow = '';
     };
-  }, [reduce]);
+  }, [reduce, quick]);
 
   if (!visible) return null;
 

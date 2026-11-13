@@ -3,11 +3,15 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Public Pages
 import Home from './pages/Home';
-import AllProjects from './pages/Public/AllProjects';
-import ProjectDetail from './pages/Public/ProjectDetail';
-import NotFound from './pages/NotFound';
 import Preloader from './components/Common/Preloader';
 import { markIntroDone } from './lib/intro';
+
+// Other public pages load when first visited (and are prefetched once the intro ends).
+const loadAllProjects = () => import('./pages/Public/AllProjects');
+const loadProjectDetail = () => import('./pages/Public/ProjectDetail');
+const AllProjects = lazy(loadAllProjects);
+const ProjectDetail = lazy(loadProjectDetail);
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Admin (loaded only when visited). Only projects, resume, reviews and messages are
 // managed here; everything else is edited in code under src/data and src/components.
@@ -26,9 +30,18 @@ function App() {
   const [isAdminLoad] = React.useState(() => window.location.pathname.startsWith('/admin'));
   React.useEffect(() => { if (isAdminLoad) markIntroDone(); }, [isAdminLoad]);
 
+  // Warm the project pages in the background so clicking a project is instant.
+  React.useEffect(() => {
+    if (isAdminLoad) return undefined;
+    const t = setTimeout(() => { loadAllProjects(); loadProjectDetail(); }, 4000);
+    return () => clearTimeout(t);
+  }, [isAdminLoad]);
+
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+    <>
+      {/* Outside the Suspense boundary so a lazy page loading never restarts the intro */}
       {!isAdminLoad && <Preloader />}
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -54,7 +67,8 @@ function App() {
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </Suspense>
+      </Suspense>
+    </>
   );
 }
 

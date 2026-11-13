@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Eye, ImagePlus, Loader2, Pencil, Save, Undo2, X } from 'lucide-react';
+import { ArrowLeft, Eye, ImagePlus, Loader2, Pencil, Save, Sparkles, Undo2, Wand2, X } from 'lucide-react';
 import api from '../../../api/axios';
 import { apiError, Card, ErrorNote, Field, inputCls, PageHeader, Spinner, Toggle } from '../../../components/Admin/ui';
 import { renderMarkdown } from '../../../lib/markdown';

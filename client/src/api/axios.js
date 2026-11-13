@@ -46,3 +46,19 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+/**
+ * GET for pages with no bundled fallback (e.g. the blog). The backend runs on a free
+ * plan that sleeps when idle and needs up to ~60 s to wake, so wait longer and retry
+ * once on timeouts, network errors and 5xx answers. 4xx (e.g. 404) are not retried.
+ */
+export const getWithWakeup = async (url, config = {}) => {
+  const attempt = () => api.get(url, { timeout: 60000, ...config });
+  try {
+    return await attempt();
+  } catch (err) {
+    const status = err?.response?.status;
+    if (status && status < 500) throw err;
+    return attempt();
+  }
+};

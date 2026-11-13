@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Clock, Loader2 } from 'lucide-react';
 import Navbar from '../../components/Public/Navbar';
 import Footer from '../../components/Public/Footer';
-import api from '../../api/axios';
+import { getWithWakeup } from '../../api/axios';
 import { useSiteMotion } from '../../lib/motion';
 import { startSmoothScroll } from '../../lib/smooth';
 import { usePageMeta } from '../../lib/pageMeta';
@@ -17,21 +17,25 @@ const BlogPost = () => {
   const { slug } = useParams();
   const scope = useRef(null);
   // Result per slug, so a new slug shows "loading" without resetting state in an effect.
-  const [result, setResult] = useState({ slug: null, post: undefined });
-  const post = result.slug === slug ? result.post : undefined; // undefined = loading, null = not found
+  const [result, setResult] = useState({ slug: null, post: undefined, failed: false });
+  const [attempt, setAttempt] = useState(0);
+  const current = result.slug === `${slug}#${attempt}`;
+  const post = current ? result.post : undefined; // undefined = loading, null = not found / failed
+  const failed = current && result.failed;
 
   useEffect(() => { window.scrollTo(0, 0); return startSmoothScroll(); }, [slug]);
   useEffect(() => {
     let alive = true;
-    api.get(`/posts/${encodeURIComponent(slug)}`, { timeout: 20000 })
-      .then(({ data }) => { if (alive) { setResult({ slug, post: data }); track('post_view', { target: slug }); } })
-      .catch(() => { if (alive) setResult({ slug, post: null }); });
+    const key = `${slug}#${attempt}`;
+    getWithWakeup(`/posts/${encodeURIComponent(slug)}`)
+      .then(({ data }) => { if (alive) { setResult({ slug: key, post: data, failed: false }); track('post_view', { target: slug }); } })
+      .catch((err) => { if (alive) setResult({ slug: key, post: null, failed: err?.response?.status !== 404 }); });
     return () => { alive = false; };
-  }, [slug]);
+  }, [slug, attempt]);
   useSiteMotion(scope, [post?._id]);
 
   usePageMeta({
-    title: post ? post.title : post === null ? 'Post not found' : 'Blog',
+    title: post ? post.title : post === null && !failed ? 'Post not found' : 'Blog',
     description: post?.excerpt,
     path: `/blog/${slug}`,
     image: post?.coverImage,
@@ -50,10 +54,18 @@ const BlogPost = () => {
           {post === undefined ? (
             <p className="mt-16 flex items-center gap-2 text-text-muted" role="status"><Loader2 size={18} className="animate-spin" aria-hidden /> Loading…</p>
           ) : post === null ? (
-            <div className="mt-16">
-              <h1 className="font-heading text-3xl font-bold">Post not found</h1>
-              <p className="mt-2 text-text-muted">It may have been moved or unpublished. <Link to="/blog" className="text-accent-dark underline">See all posts</Link>.</p>
-            </div>
+            failed ? (
+              <div className="mt-16">
+                <h1 className="font-heading text-3xl font-bold">The server is taking too long to answer</h1>
+                <p className="mt-2 text-text-muted">It may still be waking up. Try again in a few seconds.</p>
+                <button type="button" onClick={() => setAttempt((n) => n + 1)} className="btn-outline mt-6">Try again</button>
+              </div>
+            ) : (
+              <div className="mt-16">
+                <h1 className="font-heading text-3xl font-bold">Post not found</h1>
+                <p className="mt-2 text-text-muted">It may have been moved or unpublished. <Link to="/blog" className="text-accent-dark underline">See all posts</Link>.</p>
+              </div>
+            )
           ) : (
             <article className="mx-auto mt-8 max-w-3xl">
               <header>
